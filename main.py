@@ -7,13 +7,16 @@ import pygame
 import screen as scrn_mod
 import floors as floor_mod
 import player_behavior as player_mod
+import player_shots as player_shots_mod
 import os
 
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
 
+screen = scrn_mod.screen
 temporary_screen_color = (252, 252, 252)
-player_move_left = player_move_right = player_move_up = player_move_down = False
+player_move_left = player_move_right = player_move_up = player_move_down = player_shoot = False
+
 
 pygame.init()
 
@@ -24,7 +27,8 @@ player_mod.player_spawn()
 game_loop = True
 
 while game_loop == True:
-    scrn_mod.screen.fill(temporary_screen_color)
+    screen.fill(temporary_screen_color)
+    floor_mod.fill_floor_surfaces()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -45,6 +49,9 @@ while game_loop == True:
             if event.key == pygame.K_s:
                 player_move_down = True
                 #print('debug: S press')
+            if event.key == pygame.K_SPACE:
+                player_shoot = True
+                #print('debug: spacebar press')
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
                 player_move_left = False
@@ -58,12 +65,25 @@ while game_loop == True:
             if event.key == pygame.K_s:
                 player_move_down = False
                 #print('debug: S release')
+            if event.key == pygame.K_SPACE:
+                player_shoot = False
+                #print('debug: spacebar release')
 
     player_mod.player_movement(player_move_left, player_move_right, player_move_up, player_move_down)
+    for projectile in player_shots_mod.active_friendly_projectiles:
+        projectile.move()
+    
+    player_mod.try_shooting(player_shoot)
 
     player_mod.player_render()
-    floor_mod.render_floors()
-    floor_mod.fill_floor_surfaces()
-    pygame.display.flip()
 
+    # things rendered in any of the floor sub-screens go before this line
+    floor_mod.render_floors()
+    # things rendered in the entire screen go after this line
+
+    for projectile in player_shots_mod.active_friendly_projectiles:
+        projectile.render()  
+    
+    print(f'debug: number of player shots on screen: {len(player_shots_mod.active_friendly_projectiles)}')
+    pygame.display.flip()
     pygame.time.Clock().tick(60)

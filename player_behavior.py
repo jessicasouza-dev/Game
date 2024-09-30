@@ -1,5 +1,7 @@
 import pygame
 import floors as floor_mod
+import player_shots as player_shots_mod
+import screen as screen_mod
 
 player_color_temporary = (0, 252, 0)
 
@@ -19,8 +21,11 @@ BASE_UPDOWN_CD = 30
 player_updown_cd = BASE_UPDOWN_CD
 current_updown_cd = 0
 
+shooting_cooldown = 0
+current_direction = 'right'
+
 player = pygame.rect.Rect(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT)
-player_pos = pygame.Rect(50, 50, 50, 50)
+player_pos = pygame.Rect(50, 50, 50, floor_mod.floor_size_y)
 
 player_visible = True
 
@@ -41,6 +46,7 @@ def player_render():
 def player_movement(player_move_left, player_move_right, player_move_up, player_move_down):
     global current_surface
     global current_updown_cd
+    global current_direction
     surface = floor_mod.floors_list[current_surface]
 
     # handle cooldown frames for up/down movement
@@ -48,8 +54,10 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
     # if movement boolean values match, move player position
     if player_move_left == True and player_move_right == False:
         player_pos.x -= player_move_speed
+        current_direction = 'left'
     if player_move_right == True and player_move_left == False:
         player_pos.x += player_move_speed
+        current_direction = 'right'
 
     # if player is out of bounds, relocate to valid position
     if player_pos.left < surface.get_rect().left:
@@ -70,3 +78,17 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
                 current_updown_cd = player_updown_cd
     else:
         current_updown_cd -= 1
+
+def try_shooting(is_shooting):
+    global shooting_cooldown
+    #print('debug: running try_shooting function')
+
+    if shooting_cooldown == 0:
+        if is_shooting:
+            y = player_pos.centery + (current_surface * (floor_mod.floor_size_y + floor_mod.gap_size)) + floor_mod.gap_size
+            player_shots_mod.active_friendly_projectiles.append(player_shots_mod.player_projectile(player_pos.centerx, y, current_direction))
+            shooting_cooldown = player_shots_mod.cooldown_value
+        #print('debug: player ready to shoot')
+    else:
+        shooting_cooldown -= 1
+        #print(f'debug: frames until shot cooldown is over: {shooting_cooldown}')
