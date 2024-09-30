@@ -1,71 +1,35 @@
 import pygame
 import screen as scrn_module
 
-floor_width = scrn_module.screen.get_width() 
-floor_height = 15
+temporary_floor_color = (0, 0, 0)
 
-wall_width = 14
-wall_height = scrn_module.screen.get_height()
+floors_amount = 5
 
-surface = scrn_module.screen
-color_white = (255, 255, 255)
+floor_size_y = scrn_module.screen.get_height() / (floors_amount + 1)
+gap_size = (scrn_module.screen.get_height() - (floors_amount * floor_size_y)) / (floors_amount + 1)
+floor_size_x = scrn_module.screen.get_width()
 
-rows = 6
-intermediate_rows = rows - 2
+# array stores each layer as a surface type object
+floors_list = []
 
-total_height_of_floors = rows * floor_height
-available_space = scrn_module.bottom_limit - scrn_module.top_limit - (2 * floor_height)
+# array stores the positional values of each layer as a rect object
+floors_pos_list = []
+# adds the layer values to the empty surfaces array
+def create_floors():
+    for n in range(floors_amount):
+        floor_surface = pygame.Surface((floor_size_x, floor_size_y))
+        floors_list.append(floor_surface)
 
-gap = available_space // (intermediate_rows + 1)
+        next_y = (n * (floor_size_y + gap_size)) + gap_size
+        floor_position = pygame.Rect(scrn_module.left_limit, next_y, floor_size_x, floor_size_y)
+        floors_pos_list.append(floor_position)
 
-class Floors:
-    #Creates different floors with equal gaps between them
-    def __init__(self, rows, columns):
-        self.width = floor_width
-        self.height = floor_height
-        self.color = color_white
-        self.rows = rows
-        self.columns = columns
-        self.surface = scrn_module.screen
-        self.floors = [] 
-        self.create_floors()
-        
-    def create_floors(self):
-        first_y = scrn_module.top_limit
-        rect = pygame.Rect(0, first_y, self.width, self.height)
-        self.floors.append(rect)
-        
-        last_y = scrn_module.bottom_limit - floor_height
-        rect = pygame.Rect(0, last_y, self.width, self.height)
-        self.floors.append(rect)
-        
-        for i in range(self.rows):
-            y = scrn_module.top_limit + floor_height + i * gap
-            rect = pygame.Rect(0, y, self.width, self.height)
-            self.floors.append(rect)
-            
-    def draw_floors(self):
-        for rect in self.floors:
-            pygame.draw.rect(self.surface, self.color, rect, width = 0)
+# blits the empty screens depicting each row to the main gameplay screen
+# only call this function after all things that must be rendered in floor sub-screens have been rendered
+def render_floors():
+    for n in range(len(floors_list)):
+        scrn_module.screen.blit(floors_list[n], floors_pos_list[n])
 
-class Walls:
-    # Makes the Left and Right Walls
-    def __init__(self):
-        self.width = wall_width
-        self.height = wall_height
-        self.color = color_white
-        self.surface = scrn_module.screen
-        self.walls = [] 
-        self.create_walls()
-        
-    def create_walls(self):
-        left_wall_rect = pygame.Rect(0, 0, self.width, self.height)
-        self.walls.append(left_wall_rect)
-        
-        right_wall_x = scrn_module.screen.get_width() - self.width
-        right_wall_rect = pygame.Rect(right_wall_x, 0, self.width, self.height)
-        self.walls.append(right_wall_rect)
-        
-    def draw_walls(self):
-        for rect in self.walls:
-            pygame.draw.rect(self.surface, self.color, rect, width = 0)
+def fill_floor_surfaces():
+    for n in range(len(floors_list)):
+        floors_list[n].fill(temporary_floor_color)
