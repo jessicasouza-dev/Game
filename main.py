@@ -39,6 +39,12 @@ while game_loop == True:
             if event.key == pygame.K_d:
                 player_move_right = True
                 #print('debug: D press')
+            if event.key == pygame.K_w:
+                player_move_up = True
+                #print('debug: W press')
+            if event.key == pygame.K_s:
+                player_move_down = True
+                #print('debug: S press')
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
                 player_move_left = False
@@ -46,6 +52,12 @@ while game_loop == True:
             if event.key == pygame.K_d:
                 player_move_right = False
                 #print('debug: D release')
+            if event.key == pygame.K_w:
+                player_move_up = False
+                #print('debug: W release')
+            if event.key == pygame.K_s:
+                player_move_down = False
+                #print('debug: S release')
 
     player_mod.player_movement(player_move_left, player_move_right, player_move_up, player_move_down)
 
