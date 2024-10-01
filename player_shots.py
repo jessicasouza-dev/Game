@@ -83,3 +83,11 @@ class player_projectile:
         projectile = self
         index = active_friendly_projectiles.index(projectile)
         del active_friendly_projectiles[index]
+
+    def kill(self, wave):
+        projectile = self
+
+        for enemy in wave.enemies:
+            if self.rect.colliderect(enemy.rect):
+                enemy.die()
+                projectile.destroy()

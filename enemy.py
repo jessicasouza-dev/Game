@@ -13,20 +13,24 @@ ENEMY_WIDTH = 32
 ENEMY_HEIGHT = 64
 
 class Enemy:
-    def __init__(self, x, y, color, speed, surface, direction):
+    def __init__(self, x, y, color, speed, surface, direction, player):
         super().__init__()
 
         self.direction = direction
         self.width = ENEMY_WIDTH
         self.height = ENEMY_HEIGHT
-        self.x = 0
-        self.y = 0
+        self.x = x
+        self.y = y
+        self.player = player
         self.color = enemy_color_temporary
         self.speed = speed
         self.surface = surface
         self.rect = pygame.Rect(x, y, self.width, self.height)
+
+    def act(self):
         self.drawEnemy()
         self.wander()
+        self.kill(self.player)
 
     def drawEnemy(self):
         pygame.draw.rect(self.surface, self.color, self.rect, width=0)
@@ -52,9 +56,35 @@ class Enemy:
             player_mod.player_death()
             print("KILL")
 
-    def die(self, projectile):
-        if self.rect.colliderect(projectile.rect):
-            self.rect = pygame.Rect(0, 0, 0, 0)
-            print("DIE")
-            projectile.destroy()
+    def die(self):
+        self.rect = pygame.Rect(0, 0, 0, 0)
+
+
+class Wave:
+    def __init__(self, enemies_number, enemy):
+        super().__init__()
+
+        self.spawn_delay = 360
+        self.last_spawn_time = 0
+        self.enemies = []
+        self.enemies_number = enemies_number
+        self.enemy = enemy
+
+
+    def add_enemies(self):
+        current_time = pygame.time.get_ticks()
+        if current_time - self.last_spawn_time > self.spawn_delay:
+            if len(self.enemies) < self.enemies_number:
+                enemy_instance = Enemy(self.enemy.x, self.enemy.y, self.enemy.color, self.enemy.speed, self.enemy.surface, self.enemy.direction, self.enemy.player)
+                self.enemies.append(enemy_instance)
+                self.last_spawn_time = current_time
+                enemy_instance.act()
+
+    def update(self):
+        self.add_enemies()
+        for enemy in self.enemies:
+            enemy.act()
+
+
+
 
