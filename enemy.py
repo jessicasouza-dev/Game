@@ -3,6 +3,7 @@ import floors as floor_mod
 import player_behavior as player_mod
 import player_shots as player_shots_mod
 import screen as screen_mod
+import random as random
 
 enemy_color_temporary = (0, 0, 252)
 
@@ -49,7 +50,7 @@ class Enemy:
 
         # Update the rect's position
         self.rect.x = self.x
-        self.rect.bottom = floor_mod.floors_bottom_y_list[1]
+        self.rect.bottom = self.y
 
     def kill(self, player):
         if self.rect.colliderect(player):
@@ -75,7 +76,9 @@ class Wave:
         current_time = pygame.time.get_ticks()
         if current_time - self.last_spawn_time > self.spawn_delay:
             if len(self.enemies) < self.enemies_number:
-                enemy_instance = Enemy(self.enemy.x, self.enemy.y, self.enemy.color, self.enemy.speed, self.enemy.surface, self.enemy.direction, self.enemy.player)
+                number = random.randint(0, len(floor_mod.floors_bottom_y_list)-1)
+                floor = floor_mod.floors_bottom_y_list[number]
+                enemy_instance = Enemy(self.enemy.x, floor, self.enemy.color, self.enemy.speed, self.enemy.surface, self.enemy.direction, self.enemy.player)
                 self.enemies.append(enemy_instance)
                 self.last_spawn_time = current_time
                 enemy_instance.act()

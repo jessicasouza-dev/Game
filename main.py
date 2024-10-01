@@ -28,7 +28,7 @@ player_mod.player_spawn()
 game_loop = True
 
 enemy = enemy_mod.Enemy(0, floor_mod.floors_bottom_y_list[1], enemy_mod.enemy_color_temporary, 5, screen, "right", player_mod.player_pos)
-wave1 = enemy_mod.Wave(3, enemy)
+wave1 = enemy_mod.Wave(10, enemy)
 
 while game_loop == True:
     screen.fill(temporary_screen_color)
@@ -71,6 +71,7 @@ while game_loop == True:
                 #print('debug: S release')
             if event.key == pygame.K_SPACE:
                 player_shoot = False
+                print(len(floor_mod.floors_bottom_y_list))
                 #print('debug: spacebar release')
 
     player_mod.player_movement(player_move_left, player_move_right, player_move_up, player_move_down)
