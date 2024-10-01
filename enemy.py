@@ -1,5 +1,6 @@
 import pygame
 import floors as floor_mod
+import player_behavior as player_mod
 import player_shots as player_shots_mod
 import screen as screen_mod
 
@@ -31,22 +32,29 @@ class Enemy:
         pygame.draw.rect(self.surface, self.color, self.rect, width=0)
 
     def wander(self):
-        # Move the enemy in the current direction
         if self.direction == 'right':
             self.x += self.speed
-            if self.x + self.width >= screen_mod.screen.get_width():  # Check if the enemy reaches the right edge
-                self.x = screen_mod.screen.get_width() - self.width  # Set to the edge
-                self.direction = 'left'  # Change direction to left
-        else:  # Moving left
+            if self.x + self.width >= screen_mod.screen.get_width():
+                self.x = screen_mod.screen.get_width() - self.width
+                self.direction = 'left'
+        else:
             self.x -= self.speed
-            if self.x <= 0:  # Check if the enemy reaches the left edge
-                self.x = 0  # Set to the edge
-                self.direction = 'right'  # Change direction to right
+            if self.x <= 0:
+                self.x = 0
+                self.direction = 'right'
 
         # Update the rect's position
         self.rect.x = self.x
+        self.rect.bottom = floor_mod.floors_bottom_y_list[1]
 
-    def kill(self, rect):
-        if self.rect.colliderect(rect):
+    def kill(self, player):
+        if self.rect.colliderect(player):
+            player_mod.player_death()
             print("KILL")
+
+    def die(self, projectile):
+        if self.rect.colliderect(projectile.rect):
+            self.rect = pygame.Rect(0, 0, 0, 0)
+            print("DIE")
+            projectile.destroy()
 

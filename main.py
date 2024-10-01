@@ -85,6 +85,9 @@ while game_loop == True:
 
     enemy.kill(player_mod.player_pos)
 
+    for projectile in player_shots_mod.active_friendly_projectiles:
+        enemy.die(projectile)
+
 
     for projectile in player_shots_mod.active_friendly_projectiles:
         projectile.render()  

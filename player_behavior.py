@@ -41,6 +41,11 @@ def player_render():
     if player_visible == True:
         pygame.draw.rect(screen, player_color_temporary, player_pos)
 
+def player_death():
+    global player_pos
+
+    player_pos = pygame.Rect(0, 0, 0, 0)
+
 
 def player_movement(player_move_left, player_move_right, player_move_up, player_move_down):
     global current_layer

@@ -29,6 +29,9 @@ size_value = BASE_SIZE
 active_friendly_projectiles = []
 
 class player_projectile:
+
+    rect = None
+
     def __init__(self, x_spawning_position, y_spawning_position, movement_direction):
         print('debug: attempting to shoot')
         self.speed = speed_value
