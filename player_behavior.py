@@ -49,7 +49,8 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
     global current_direction
     surface = floor_mod.floors_list[current_surface]
 
-    # handle cooldown frames for up/down movement
+    # handle cooldown frames for
+    # up/down movement
 
     # if movement boolean values match, move player position
     if player_move_left == True and player_move_right == False:
