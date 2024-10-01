@@ -9,7 +9,11 @@ floor_size_y = scrn_module.screen.get_height() / (floors_amount + 1)
 gap_size = (scrn_module.screen.get_height() - (floors_amount * floor_size_y)) / (floors_amount + 1)
 floor_size_x = scrn_module.screen.get_width()
 
+# array storing positional information about each layer as rect values
 floors_rect_list = []
+
+# array storing only the bottom y positional value of each layer for easier access in other functions and mechanics
+# basically a list with the coordinates of the ground of each floor
 floors_bottom_y_list = []
 
 def create_floors():

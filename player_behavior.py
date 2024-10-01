@@ -47,9 +47,6 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
     global current_updown_cd
     global current_direction
 
-    # handle cooldown frames for
-    # up/down movement
-
     # if movement boolean values match, move player position
     if player_move_left == True and player_move_right == False:
         player_pos.x -= player_move_speed
@@ -64,6 +61,7 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
     if player_pos.right > screen.get_rect().right:
         player_pos.right = screen.get_rect().right
 
+    # up/down movement, and handling of cooldown frames for said movement
     if current_updown_cd == 0:
         #print('debug: up/down movement possible')
         if player_move_up == True and player_move_down == False:

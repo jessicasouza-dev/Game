@@ -9,7 +9,7 @@ import floors as floor_mod
 import player_behavior as player_mod
 import player_shots as player_shots_mod
 import os
-#import enemy as enemy
+import enemy as enemy
 
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
@@ -27,7 +27,7 @@ player_mod.player_spawn()
 # main loop
 game_loop = True
 
-#enemy = enemy.Enemy(0, 0, enemy.enemy_color_temporary, 5, floor_mod.floors_list[1], "right")
+enemy = enemy.Enemy(0, 0, enemy.enemy_color_temporary, 5, screen, "right")
 
 while game_loop == True:
     screen.fill(temporary_screen_color)
@@ -79,11 +79,11 @@ while game_loop == True:
     player_mod.try_shooting(player_shoot)
 
     player_mod.player_render()
-    #enemy.wander()
+    enemy.wander()
 
-    #enemy.drawEnemy()
+    enemy.drawEnemy()
 
-    #enemy.kill(player_mod.player_pos)
+    enemy.kill(player_mod.player_pos)
 
 
     for projectile in player_shots_mod.active_friendly_projectiles:
