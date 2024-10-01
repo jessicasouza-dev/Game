@@ -19,7 +19,7 @@ cooldown_value = BASE_COOLDOWN
 BASE_PIERCE = 0
 pierce_value = BASE_PIERCE
 
-BASE_BOUNCE = 0
+BASE_BOUNCE = 5
 bounce_value = BASE_BOUNCE
 
 BASE_SIZE = floor_mod.floor_size_y/5

@@ -5,7 +5,7 @@ import screen as screen_mod
 
 player_color_temporary = (0, 252, 0)
 
-current_surface = 3
+current_layer = 2
 
 # player sizes
 PLAYER_WIDTH = 32
@@ -28,26 +28,24 @@ player = pygame.rect.Rect(0, 0, PLAYER_WIDTH, PLAYER_HEIGHT)
 player_pos = pygame.Rect(50, 50, 50, floor_mod.floor_size_y)
 
 player_visible = True
+screen = screen_mod.screen
 
 def player_spawn():
-    global current_surface
-    surface = floor_mod.floors_list[current_surface]
+    global current_layer
 
-    player_pos.centerx = surface.get_width() / 2
-    player_pos.bottom = surface.get_height()
-    current_surface = 2
+    player_pos.centerx = screen.get_width() / 2
+    player_pos.bottom = floor_mod.floors_bottom_y_list[current_layer]
+    current_layer = 2
 
 def player_render():
-    surface = floor_mod.floors_list[current_surface]
     if player_visible == True:
-        pygame.draw.rect(surface, player_color_temporary, player_pos)
+        pygame.draw.rect(screen, player_color_temporary, player_pos)
 
 
 def player_movement(player_move_left, player_move_right, player_move_up, player_move_down):
-    global current_surface
+    global current_layer
     global current_updown_cd
     global current_direction
-    surface = floor_mod.floors_list[current_surface]
 
     # handle cooldown frames for
     # up/down movement
@@ -61,24 +59,26 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
         current_direction = 'right'
 
     # if player is out of bounds, relocate to valid position
-    if player_pos.left < surface.get_rect().left:
-        player_pos.left = surface.get_rect().left
-    if player_pos.right > surface.get_rect().right:
-        player_pos.right = surface.get_rect().right
+    if player_pos.left < screen.get_rect().left:
+        player_pos.left = screen.get_rect().left
+    if player_pos.right > screen.get_rect().right:
+        player_pos.right = screen.get_rect().right
 
     if current_updown_cd == 0:
         #print('debug: up/down movement possible')
         if player_move_up == True and player_move_down == False:
             #print('debug: attempting move up')
-            if current_surface != 0:
-                current_surface -= 1
+            if current_layer != 0:
+                current_layer -= 1
                 current_updown_cd = player_updown_cd
         if player_move_down == True and player_move_up == False:
-            if current_surface != 4:
-                current_surface += 1
+            if current_layer != 4:
+                current_layer += 1
                 current_updown_cd = player_updown_cd
     else:
         current_updown_cd -= 1
+
+    player_pos.bottom = floor_mod.floors_bottom_y_list[current_layer]
 
 def try_shooting(is_shooting):
     global shooting_cooldown
@@ -86,7 +86,7 @@ def try_shooting(is_shooting):
 
     if shooting_cooldown == 0:
         if is_shooting:
-            y = player_pos.centery + (current_surface * (floor_mod.floor_size_y + floor_mod.gap_size)) + floor_mod.gap_size
+            y = player_pos.centery
             player_shots_mod.active_friendly_projectiles.append(player_shots_mod.player_projectile(player_pos.centerx, y, current_direction))
             shooting_cooldown = player_shots_mod.cooldown_value
         #print('debug: player ready to shoot')

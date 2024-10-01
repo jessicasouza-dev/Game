@@ -9,7 +9,7 @@ import floors as floor_mod
 import player_behavior as player_mod
 import player_shots as player_shots_mod
 import os
-import enemy as enemy
+#import enemy as enemy
 
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
@@ -27,11 +27,11 @@ player_mod.player_spawn()
 # main loop
 game_loop = True
 
-enemy = enemy.Enemy(0, 0, enemy.enemy_color_temporary, 5, floor_mod.floors_list[1], "right")
+#enemy = enemy.Enemy(0, 0, enemy.enemy_color_temporary, 5, floor_mod.floors_list[1], "right")
 
 while game_loop == True:
     screen.fill(temporary_screen_color)
-    floor_mod.fill_floor_surfaces()
+    floor_mod.render_floors()
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -75,25 +75,20 @@ while game_loop == True:
     player_mod.player_movement(player_move_left, player_move_right, player_move_up, player_move_down)
     for projectile in player_shots_mod.active_friendly_projectiles:
         projectile.move()
-    
+
     player_mod.try_shooting(player_shoot)
 
     player_mod.player_render()
-    enemy.wander()
+    #enemy.wander()
 
-    enemy.drawEnemy()
+    #enemy.drawEnemy()
 
-    enemy.kill(player_mod.player_pos)
+    #enemy.kill(player_mod.player_pos)
 
-
-
-    # things rendered in any of the floor sub-screens go before this line
-    floor_mod.render_floors()
-    # things rendered in the entire screen go after this line
 
     for projectile in player_shots_mod.active_friendly_projectiles:
         projectile.render()  
     
-    #print(f'debug: number of player shots on screen: {len(player_shots_mod.active_friendly_projectiles)}')
+
     pygame.display.flip()
     pygame.time.Clock().tick(60)
