@@ -10,6 +10,7 @@ import player_behavior as player_mod
 import player_shots as player_shots_mod
 import os
 import enemy as enemy_mod
+import life as life_mod
 
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
@@ -79,9 +80,8 @@ while game_loop == True:
         projectile.move()
 
     player_mod.try_shooting(player_shoot)
-
+    life_mod.show_life()
     player_mod.player_render()
-
     wave1.update()
 
     for projectile in player_shots_mod.active_friendly_projectiles:

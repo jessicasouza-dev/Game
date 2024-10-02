@@ -2,6 +2,7 @@ import pygame
 import floors as floor_mod
 import player_shots as player_shots_mod
 import screen as screen_mod
+import life  as life_mod
 
 player_color_temporary = (0, 252, 0)
 
@@ -29,6 +30,10 @@ player_pos = pygame.Rect(50, 50, 50, floor_mod.floor_size_y)
 
 player_visible = True
 screen = screen_mod.screen
+
+invincible = False
+invincible_time = 0 
+invincible_duration = 3000
 
 def player_spawn():
     global current_layer
@@ -96,3 +101,16 @@ def try_shooting(is_shooting):
     else:
         shooting_cooldown -= 1
         #print(f'debug: frames until shot cooldown is over: {shooting_cooldown}')
+        
+  
+def player_gets_hit():
+    global invincible, invincible_time
+    if invincible ==  False:
+        life_mod.lose_life()
+        invincible = True
+        invincible_time = pygame.time.get_ticks()
+                
+    if invincible == True:
+        current_time = pygame.time.get_ticks()
+        if current_time - invincible_time >= invincible_duration:
+            invincible = False
