@@ -6,16 +6,28 @@ import screen as scrn_mod
 
 
 life = 100
+max_life = 100
 
 def show_life():
-    global life
-    life_font = pygame.font.Font(None, 80)
+    global life, max_life
+    bar_width = 200
+    bar_height = 30
+    bar_x = scrn_mod.screen.get_width() - 250 
+    bar_y = 50 
+
+    current_bar_width = int((life / max_life) * bar_width)
+    
+    life_color = scrn_mod.COLOR_GREEN
+    background_color = scrn_mod.COLOR_RED
+
+    pygame.draw.rect(scrn_mod.screen, background_color, (bar_x, bar_y, bar_width, bar_height))
+    pygame.draw.rect(scrn_mod.screen, life_color, (bar_x, bar_y, current_bar_width, bar_height))
+
+    life_font = pygame.font.Font(None, 30)
     life_text = life_font.render(f"Life: {life}", True, scrn_mod.COLOR_WHITE, scrn_mod.COLOR_BLACK)
-    life_text_rect = life_text.get_rect()
-    life_text_rect.center = (scrn_mod.screen.get_width() - 120, 50)
+    scrn_mod.screen.blit(life_text, (bar_x + 60, bar_y - 20))
     
     
-    scrn_mod.screen.blit(life_text, life_text_rect)
     
 def lose_life():
     global life
