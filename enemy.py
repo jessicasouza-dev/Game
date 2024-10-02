@@ -65,40 +65,41 @@ class Wave:
     def __init__(self, enemies_number, enemy, subwaves):
         super().__init__()
 
-        self.spawn_delay = 60
-        self.wave_delay = 3600
+        self.spawn_delay = 120
+        self.wave_delay = 360
         self.last_spawn_time = 0
         self.last_wave_time = 0
         self.enemies = []
         self.enemies_number = enemies_number
         self.enemy = enemy
         self.subwaves = subwaves
-        self.enemies_spawned = 0
         self.enemies_per_sub_wave = enemies_number // subwaves
         self.current_wave = 0
 
     def add_enemies(self):
-        current_time = pygame.time.get_ticks()
+
         for i in range(self.enemies_per_sub_wave):
-            #if current_time - self.last_spawn_time > self.spawn_delay:
-            number = random.randint(0, len(floor_mod.floors_bottom_y_list)-1)
-            floor = floor_mod.floors_bottom_y_list[number]
-            enemy_instance = Enemy(self.enemy.x, floor, self.enemy.color, self.enemy.speed, self.enemy.surface, self.enemy.direction, self.enemy.player)
-            self.enemies.append(enemy_instance)
-            self.enemies_spawned += 1
-            print(f"enemy n° {i}")
-            self.last_spawn_time = current_time
+            if self.spawn_delay >= 120:
+                number = random.randint(0, len(floor_mod.floors_bottom_y_list)-1)
+                floor = floor_mod.floors_bottom_y_list[number]
+                enemy_instance = Enemy(self.enemy.x, floor, self.enemy.color, self.enemy.speed, self.enemy.surface, self.enemy.direction, self.enemy.player)
+                self.enemies.append(enemy_instance)
+                print(f"enemy n° {i+1}")
+                self.spawn_delay = 0
+            else:
+                self.spawn_delay += 1
 
 
 
     def control_waves(self):
-        current_time = pygame.time.get_ticks()
-        if current_time - self.last_wave_time > self.wave_delay:
+        if self.wave_delay == 360:
             if self.current_wave < self.subwaves:
-                self.last_wave_time = current_time
+                print(f"wave n° {self.current_wave}")
                 self.add_enemies()
                 self.current_wave += 1
-                print(f"wave n° {self.current_wave}")
+                self.wave_delay = 0
+        else:
+            self.wave_delay += 1
 
 
     def update(self):
