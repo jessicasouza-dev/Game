@@ -70,7 +70,6 @@ class Wave:
         self.last_spawn_time = 0
         self.last_wave_time = 0
         self.enemies = []
-        self.number_in_waves = []
         self.enemies_number = enemies_number
         self.enemy = enemy
         self.subwaves = subwaves
@@ -80,29 +79,28 @@ class Wave:
 
     def add_enemies(self):
         current_time = pygame.time.get_ticks()
-        if current_time - self.last_spawn_time > self.spawn_delay:
-            if self.enemies_spawned < self.enemies_per_sub_wave:
-                number = random.randint(0, len(floor_mod.floors_bottom_y_list)-1)
-                floor = floor_mod.floors_bottom_y_list[number]
-                enemy_instance = Enemy(self.enemy.x, floor, self.enemy.color, self.enemy.speed, self.enemy.surface, self.enemy.direction, self.enemy.player)
-                self.enemies.append(enemy_instance)
-                self.enemies_spawned += 1
-                self.last_spawn_time = current_time
+        for i in range(self.subwaves):
+            #if current_time - self.last_spawn_time > self.spawn_delay:
+            number = random.randint(0, len(floor_mod.floors_bottom_y_list)-1)
+            floor = floor_mod.floors_bottom_y_list[number]
+            enemy_instance = Enemy(self.enemy.x, floor, self.enemy.color, self.enemy.speed, self.enemy.surface, self.enemy.direction, self.enemy.player)
+            self.enemies.append(enemy_instance)
+            self.enemies_spawned += 1
+            self.last_spawn_time = current_time
 
 
 
     def control_waves(self):
         current_time = pygame.time.get_ticks()
-
-        if self.current_wave < self.subwaves:
-            if current_time - self.last_wave_time > self.wave_delay:
+        if current_time - self.last_wave_time > self.wave_delay:
+            if self.current_wave < self.subwaves:
                 self.last_wave_time = current_time
-                self.enemies_spawned = 0
-
-                self.current_wave += 1
                 self.add_enemies()
+                self.current_wave += 1
+
 
     def update(self):
+        self.control_waves()
         for enemy in self.enemies:
             enemy.act()
 

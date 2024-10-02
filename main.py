@@ -82,8 +82,6 @@ while game_loop == True:
 
     player_mod.player_render()
 
-    wave1.control_waves()
-
     wave1.update()
 
     for projectile in player_shots_mod.active_friendly_projectiles:
