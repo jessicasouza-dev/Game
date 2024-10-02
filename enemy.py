@@ -13,6 +13,7 @@ enemy_pos = pygame.Rect(50, 50, 50, floor_mod.floor_size_y)
 ENEMY_WIDTH = 32
 ENEMY_HEIGHT = 64
 
+
 class Enemy:
     def __init__(self, x, y, color, speed, surface, direction, player):
         super().__init__()
@@ -55,36 +56,53 @@ class Enemy:
     def kill(self, player):
         if self.rect.colliderect(player):
             player_mod.player_death()
-            print("KILL")
 
     def die(self):
         self.rect = pygame.Rect(0, 0, 0, 0)
 
 
 class Wave:
-    def __init__(self, enemies_number, enemy):
+    def __init__(self, enemies_number, enemy, subwaves):
         super().__init__()
 
-        self.spawn_delay = 360
+        self.spawn_delay = 60
+        self.wave_delay = 3600
         self.last_spawn_time = 0
+        self.last_wave_time = 0
         self.enemies = []
+        self.number_in_waves = []
         self.enemies_number = enemies_number
         self.enemy = enemy
-
+        self.subwaves = subwaves
+        self.enemies_spawned = 0
+        self.enemies_per_sub_wave = enemies_number // subwaves
+        self.current_wave = 0
 
     def add_enemies(self):
         current_time = pygame.time.get_ticks()
         if current_time - self.last_spawn_time > self.spawn_delay:
-            if len(self.enemies) < self.enemies_number:
+            if self.enemies_spawned < self.enemies_per_sub_wave:
                 number = random.randint(0, len(floor_mod.floors_bottom_y_list)-1)
                 floor = floor_mod.floors_bottom_y_list[number]
                 enemy_instance = Enemy(self.enemy.x, floor, self.enemy.color, self.enemy.speed, self.enemy.surface, self.enemy.direction, self.enemy.player)
                 self.enemies.append(enemy_instance)
+                self.enemies_spawned += 1
                 self.last_spawn_time = current_time
-                enemy_instance.act()
+
+
+
+    def control_waves(self):
+        current_time = pygame.time.get_ticks()
+
+        if self.current_wave < self.subwaves:
+            if current_time - self.last_wave_time > self.wave_delay:
+                self.last_wave_time = current_time
+                self.enemies_spawned = 0
+
+                self.current_wave += 1
+                self.add_enemies()
 
     def update(self):
-        self.add_enemies()
         for enemy in self.enemies:
             enemy.act()
 

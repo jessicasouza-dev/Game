@@ -28,7 +28,7 @@ player_mod.player_spawn()
 game_loop = True
 
 enemy = enemy_mod.Enemy(0, floor_mod.floors_bottom_y_list[1], enemy_mod.enemy_color_temporary, 5, screen, "right", player_mod.player_pos)
-wave1 = enemy_mod.Wave(10, enemy)
+wave1 = enemy_mod.Wave(10, enemy, 2)
 
 while game_loop == True:
     screen.fill(temporary_screen_color)
@@ -81,6 +81,9 @@ while game_loop == True:
     player_mod.try_shooting(player_shoot)
 
     player_mod.player_render()
+
+    wave1.control_waves()
+
     wave1.update()
 
     for projectile in player_shots_mod.active_friendly_projectiles:
