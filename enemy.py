@@ -57,57 +57,39 @@ class Enemy:
     def enemy_hit_player(self, player):
         if self.rect.colliderect(player) == True:
             player_mod.player_gets_hit()
-        
+
     def die(self):
         self.rect = pygame.Rect(0, 0, 0, 0)
 
 
 class Wave:
-    def __init__(self, enemies_number, enemy, subwaves):
+    def __init__(self, enemies_number, enemy):
         super().__init__()
 
-        self.spawn_delay = 120
-        self.wave_delay = 360
+        self.spawn_delay = 900
         self.last_spawn_time = 0
-        self.last_wave_time = 0
         self.enemies = []
         self.enemies_number = enemies_number
         self.enemy = enemy
-        self.subwaves = subwaves
-        self.enemies_per_sub_wave = enemies_number // subwaves
         self.current_wave = 0
+        self.enemies_added = 0
 
     def add_enemies(self):
 
-        for i in range(self.enemies_per_sub_wave):
-            if self.spawn_delay >= 120:
-                number = random.randint(0, len(floor_mod.floors_bottom_y_list)-1)
-                floor = floor_mod.floors_bottom_y_list[number]
-                enemy_instance = Enemy(self.enemy.x, floor, self.enemy.color, self.enemy.speed, self.enemy.surface, self.enemy.direction, self.enemy.player)
-                self.enemies.append(enemy_instance)
-                print(f"enemy n° {i+1}")
-                self.spawn_delay = 0
-            else:
-                self.spawn_delay += 1
-
-
-
-    def control_waves(self):
-        if self.wave_delay == 360:
-            if self.current_wave < self.subwaves:
-                print(f"wave n° {self.current_wave}")
-                self.add_enemies()
-                self.current_wave += 1
-                self.wave_delay = 0
-        else:
-            self.wave_delay += 1
-
+        number = random.randint(0, len(floor_mod.floors_bottom_y_list) - 1)
+        floor = floor_mod.floors_bottom_y_list[number]
+        enemy_instance = Enemy(self.enemy.x, floor, self.enemy.color, self.enemy.speed, self.enemy.surface,
+                               self.enemy.direction, self.enemy.player)
+        self.enemies.append(enemy_instance)
+        print(f"new enemy {self.enemies_added + 1}")
+        self.enemies_added += 1
 
     def update(self):
-        self.control_waves()
+        current_time = pygame.time.get_ticks()
+
+        if current_time - self.last_spawn_time >= self.spawn_delay and self.enemies_added < self.enemies_number:
+            self.add_enemies()
+            self.last_spawn_time = current_time
+
         for enemy in self.enemies:
             enemy.act()
-
-
-
-

@@ -19,7 +19,7 @@ cooldown_value = BASE_COOLDOWN
 BASE_PIERCE = 0
 pierce_value = BASE_PIERCE
 
-BASE_BOUNCE = 5
+BASE_BOUNCE = 0
 bounce_value = BASE_BOUNCE
 
 BASE_SIZE = floor_mod.floor_size_y/5
@@ -82,7 +82,7 @@ class player_projectile:
     def destroy(self):
         projectile = self
         index = active_friendly_projectiles.index(projectile)
-        #del active_friendly_projectiles[index]
+        del active_friendly_projectiles[index]
 
     def kill(self, wave):
         projectile = self
@@ -90,5 +90,6 @@ class player_projectile:
         for enemy in wave.enemies:
             if self.rect.colliderect(enemy.rect):
                 enemy.die()
+                wave.enemies.remove(enemy)
                 projectile.destroy()
                 
