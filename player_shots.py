@@ -82,7 +82,7 @@ class player_projectile:
     def destroy(self):
         projectile = self
         index = active_friendly_projectiles.index(projectile)
-        del active_friendly_projectiles[index]
+        #del active_friendly_projectiles[index]
 
     def kill(self, wave):
         projectile = self
@@ -91,3 +91,4 @@ class player_projectile:
             if self.rect.colliderect(enemy.rect):
                 enemy.die()
                 projectile.destroy()
+                

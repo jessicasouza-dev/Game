@@ -4,6 +4,7 @@ import player_behavior as player_mod
 import player_shots as player_shots_mod
 import screen as screen_mod
 import random as random
+import life as life_mod
 
 enemy_color_temporary = (0, 0, 252)
 
@@ -32,7 +33,7 @@ class Enemy:
     def act(self):
         self.drawEnemy()
         self.wander()
-        self.kill(self.player)
+        self.enemy_hit_player(self.player)
 
     def drawEnemy(self):
         pygame.draw.rect(self.surface, self.color, self.rect, width=0)
@@ -53,10 +54,10 @@ class Enemy:
         self.rect.x = self.x
         self.rect.bottom = self.y
 
-    def kill(self, player):
-        if self.rect.colliderect(player):
-            player_mod.player_death()
-
+    def enemy_hit_player(self, player):
+        if self.rect.colliderect(player) == True:
+            player_mod.player_gets_hit()
+        
     def die(self):
         self.rect = pygame.Rect(0, 0, 0, 0)
 
