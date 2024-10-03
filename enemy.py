@@ -16,7 +16,7 @@ ENEMY_HEIGHT = 64
 
 
 class Enemy:
-    def __init__(self, x, y, color, speed, surface, direction, player):
+    def __init__(self, x, y, color, speed, surface, direction, player, current_layer):
         super().__init__()
 
         self.direction = direction
@@ -29,11 +29,13 @@ class Enemy:
         self.speed = speed
         self.surface = surface
         self.rect = pygame.Rect(x, y, self.width, self.height)
+        self.current_layer = current_layer
 
     def act(self):
         self.drawEnemy()
         self.wander()
         self.enemy_hit_player(self.player)
+        self.see_player()
 
     def drawEnemy(self):
         pygame.draw.rect(self.surface, self.color, self.rect, width=0)
@@ -61,6 +63,10 @@ class Enemy:
     def die(self):
         self.rect = pygame.Rect(0, 0, 0, 0)
 
+    def see_player(self):
+        if self.current_layer == player_mod.current_layer and self.direction != player_mod.current_direction:
+            print()
+
 
 class Wave:
     def __init__(self, enemies_number, enemy, wave_number):
@@ -74,26 +80,32 @@ class Wave:
         self.current_wave = 0
         self.wave_number = wave_number
         self.enemies_added = 0
+        self.isActive = True
 
     def add_enemies(self):
 
         number = random.randint(0, len(floor_mod.floors_bottom_y_list) - 1)
         floor = floor_mod.floors_bottom_y_list[number]
         enemy_instance = Enemy(self.enemy.x, floor, self.enemy.color, self.enemy.speed, self.enemy.surface,
-                               self.enemy.direction, self.enemy.player)
+                               self.enemy.direction, self.enemy.player, number)
         self.enemies.append(enemy_instance)
         print(f"new enemy {self.enemies_added + 1}")
         self.enemies_added += 1
 
     def update(self):
-        current_time = pygame.time.get_ticks()
+        if self.isActive:
+            current_time = pygame.time.get_ticks()
 
-        if current_time - self.last_spawn_time >= self.spawn_delay and self.enemies_added < self.enemies_number:
-            self.add_enemies()
-            self.last_spawn_time = current_time
+            if current_time - self.last_spawn_time >= self.spawn_delay and self.enemies_added < self.enemies_number:
+                self.add_enemies()
+                self.last_spawn_time = current_time
 
-        for enemy in self.enemies:
-            enemy.act()
+
+            for enemy in self.enemies:
+                enemy.act()
+
+            if len(self.enemies) == 0 and self.enemies_added > 0:
+                self.isActive = False
             
     def restart_waves(self):
         self.enemies.clear()  

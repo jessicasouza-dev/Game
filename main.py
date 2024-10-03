@@ -11,6 +11,7 @@ import player_shots as player_shots_mod
 import os
 import enemy as enemy_mod
 import life as life_mod
+import wave_controller as wave_controller_mod
 
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
@@ -28,8 +29,12 @@ player_mod.player_spawn()
 # main loop
 game_loop = True
 
-enemy = enemy_mod.Enemy(0, floor_mod.floors_bottom_y_list[1], enemy_mod.enemy_color_temporary, 5, screen, "right", player_mod.player_pos)
-wave1 = enemy_mod.Wave(40, enemy, 2)
+enemy = enemy_mod.Enemy(0, floor_mod.floors_bottom_y_list[1], enemy_mod.enemy_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
+enemy2 = enemy_mod.Enemy(0, floor_mod.floors_bottom_y_list[1], player_mod.player_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
+wave1 = enemy_mod.Wave(1, enemy, 2)
+wave2 = enemy_mod.Wave(3, enemy2, 2)
+wave3 = enemy_mod.Wave(5, enemy2, 2)
+waves = [wave1, wave2, wave3]
 
 while game_loop == True:
     screen.fill(temporary_screen_color)
@@ -74,6 +79,7 @@ while game_loop == True:
                 player_shoot = False
                 #print('debug: spacebar release')
 
+
     player_mod.player_movement(player_move_left, player_move_right, player_move_up, player_move_down)
     for projectile in player_shots_mod.active_friendly_projectiles:
         projectile.move()
@@ -81,11 +87,11 @@ while game_loop == True:
     player_mod.try_shooting(player_shoot)
     life_mod.show_life()
     player_mod.player_render()
-    wave1.update()
+    wave_controller_mod.control_waves(waves)
 
     for projectile in player_shots_mod.active_friendly_projectiles:
         projectile.render()
-        projectile.kill(wave1)
+        projectile.kill(wave_controller_mod.current_wave)
         
     if life_mod.life == 0:
         wave1.restart_waves()
