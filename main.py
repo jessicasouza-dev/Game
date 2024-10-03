@@ -12,6 +12,7 @@ import os
 import enemy as enemy_mod
 import life as life_mod
 import wave_controller as wave_controller_mod
+import wave as wave_mod
 
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
@@ -29,11 +30,11 @@ player_mod.player_spawn()
 # main loop
 game_loop = True
 
-enemy = enemy_mod.Enemy(0, floor_mod.floors_bottom_y_list[1], enemy_mod.enemy_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
+enemy = enemy_mod.Shooter(0, floor_mod.floors_bottom_y_list[1], enemy_mod.enemy_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
 enemy2 = enemy_mod.Enemy(0, floor_mod.floors_bottom_y_list[1], player_mod.player_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
-wave1 = enemy_mod.Wave(1, enemy, 2)
-wave2 = enemy_mod.Wave(3, enemy2, 2)
-wave3 = enemy_mod.Wave(5, enemy2, 2)
+wave1 = wave_mod.Wave(1, enemy, 2, "Shooter")
+wave2 = wave_mod.Wave(3, enemy2, 2, "Enemy")
+wave3 = wave_mod.Wave(5, enemy2, 2, "Enemy")
 waves = [wave1, wave2, wave3]
 
 while game_loop == True:

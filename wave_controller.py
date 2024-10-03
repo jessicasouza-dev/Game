@@ -7,10 +7,11 @@ import player_behavior as player_mod
 import player_shots as player_shots_mod
 import os
 import enemy as enemy_mod
+import wave as wave_mod
 import life as life_mod
 
 last_number = 0
-current_wave = enemy_mod.Wave(1, enemy, 2)
+current_wave = wave_mod.Wave(1, enemy, 2, "Enemy")
 delay = 10000
 last_time = 0
 
