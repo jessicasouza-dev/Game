@@ -63,7 +63,7 @@ class Enemy:
 
 
 class Wave:
-    def __init__(self, enemies_number, enemy):
+    def __init__(self, enemies_number, enemy, wave_number):
         super().__init__()
 
         self.spawn_delay = 900
@@ -72,6 +72,7 @@ class Wave:
         self.enemies_number = enemies_number
         self.enemy = enemy
         self.current_wave = 0
+        self.wave_number = wave_number
         self.enemies_added = 0
 
     def add_enemies(self):
@@ -93,3 +94,15 @@ class Wave:
 
         for enemy in self.enemies:
             enemy.act()
+            
+    def restart_waves(self):
+        self.enemies.clear()  
+        self.last_spawn_time = 0
+        self.enemies_added = 0
+
+        life_mod.life = life_mod.max_life
+        player_mod.player_spawn()
+        player_mod.player_render()
+            
+        self.last_restart_time = pygame.time.get_ticks()
+        

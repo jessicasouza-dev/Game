@@ -86,7 +86,10 @@ while game_loop == True:
     for projectile in player_shots_mod.active_friendly_projectiles:
         projectile.render()
         projectile.kill(wave1)
-    
+        
+    if life_mod.life == 0:
+        wave1.restart_waves()
+        life_mod.life = life_mod.max_life
 
     pygame.display.flip()
     pygame.time.Clock().tick(60)

@@ -1,9 +1,9 @@
 import pygame
 import player_shots as player_shots_mod
-import enemy as players_shots_mod
+import enemy as enemy_mod
 import player_behavior as player_mod
 import screen as scrn_mod
-
+import floors as floor_mod
 
 life = 100
 max_life = 100
@@ -33,6 +33,5 @@ def lose_life():
     global life
     life -= 20
     if life == 0 or life < 0:
-        player_mod.player_death()
         life = 0
         
