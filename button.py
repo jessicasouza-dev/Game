@@ -1,5 +1,49 @@
-import pygame
+import pygame, sys
+import screen as scrn_mod
 
+screen = scrn_mod.screen
+
+#Main menu code, not executed yet
+#Temporary images
+BG = pygame.image.load("assets/background.jpg")
+BG = pygame.transform.scale(BG, (720, 720))
+image = pygame.image.load("assets/button background.png")
+image = pygame.transform.scale(image, (300, 100))
+
+def get_font(size):
+    return pygame.font.Font("assets\Love Roti.ttf",80)
+
+def main_menu():
+    pygame.display.set_caption("Menu")
+    screen.blit(BG, (0,0))
+
+    
+    while True:
+        menu_mouse_pos = pygame.mouse.get_pos()
+    
+        
+        menu_text = get_font(100).render("Main Menu", True, scrn_mod.COLOR_BLACK)
+        menu_rect = menu_text.get_rect(center = (350,200))
+        
+        play_button = Button(image, pos = (350,350), 
+                                        text_input = "PLAY", font = get_font(75), base_color = scrn_mod.COLOR_WHITE,
+                                        hovering_color = scrn_mod.COLOR_WHITE)
+        
+        screen.blit(menu_text, menu_rect)
+        play_button.update(screen)
+        
+
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                pygame.quit()
+                sys.exit()
+                
+            if event.type == pygame.MOUSEBUTTONDOWN:
+                if play_button.check_for_input(menu_mouse_pos):
+                    game()
+                
+        pygame.display.update()
+     
 class Button():
     def __init__(self, image, pos, text_input, font, base_color, hovering_color):
         self.image = image
