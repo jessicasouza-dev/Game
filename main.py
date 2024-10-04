@@ -9,6 +9,7 @@ import floors as floor_mod
 import player_behavior as player_mod
 import player_shots as player_shots_mod
 import os
+import shot as shot_mod
 import enemy as enemy_mod
 import life as life_mod
 import wave_controller as wave_controller_mod
@@ -37,7 +38,7 @@ image = pygame.transform.scale(image, (300, 100))
 
 enemy = enemy_mod.Shooter(0, floor_mod.floors_bottom_y_list[1], enemy_mod.enemy_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
 enemy2 = enemy_mod.Enemy(0, floor_mod.floors_bottom_y_list[1], player_mod.player_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
-wave1 = wave_mod.Wave(1, enemy, 2, "Shooter")
+wave1 = wave_mod.Wave(2, enemy, 2, "Shooter")
 wave2 = wave_mod.Wave(3, enemy2, 2, "Enemy")
 wave3 = wave_mod.Wave(5, enemy2, 2, "Enemy")
 waves = [wave1, wave2, wave3]
@@ -108,22 +109,6 @@ def game():
                 if event.key == pygame.K_SPACE:
                     player_shoot = True
                     #print('debug: spacebar press')
-            if event.type == pygame.KEYUP:
-                if event.key == pygame.K_a:
-                    player_move_left = False
-                    #print('debug: A release')
-                if event.key == pygame.K_d:
-                    player_move_right = False
-                    #print('debug: D release')
-                if event.key == pygame.K_w:
-                    player_move_up = False
-                    #print('debug: W release')
-                if event.key == pygame.K_s:
-                    player_move_down = False
-                    #print('debug: S release')
-                if event.key == pygame.K_SPACE:
-                    player_shoot = False
-                    #print('debug: spacebar release')
 
 
         player_mod.player_movement(player_move_left, player_move_right, player_move_up, player_move_down)
@@ -135,13 +120,16 @@ def game():
         player_mod.player_render()
         wave_controller_mod.control_waves(waves)
 
-        for projectile in player_shots_mod.active_friendly_projectiles:
-            projectile.render()
-            projectile.kill(wave_controller_mod.current_wave)
-            
-        if life_mod.life == 0:
-            wave1.restart_waves()
-            life_mod.life = life_mod.max_life
+    for projectile in player_shots_mod.active_friendly_projectiles:
+        projectile.render()
+        projectile.kill(wave_controller_mod.current_wave)
+        
+    for projectile in shot_mod.active_projectiles:
+        projectile.update()
+        
+    if life_mod.life == 0:
+        wave1.restart_waves()
+        life_mod.life = life_mod.max_life
 
         pygame.display.flip()
         pygame.time.Clock().tick(60)
