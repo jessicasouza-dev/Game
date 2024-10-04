@@ -4,9 +4,6 @@ import enemy
 import screen as scrn_mod
 import floors as floor_mod
 import player_behavior as player_mod
-import player_shots as player_shots_mod
-import os
-import enemy as enemy_mod
 import random as random
 import life as life_mod
 
