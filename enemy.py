@@ -16,6 +16,8 @@ ENEMY_WIDTH = 32
 ENEMY_HEIGHT = 64
 
 cooldown = 0
+sniper_cooldown = 0
+delay = 100
 
 
 class Enemy:
@@ -88,29 +90,93 @@ class Shooter(Enemy):
         global cooldown
         if self.current_layer == player_mod.current_layer:
 
-            if (self.direction == "right" and player_mod.player_pos.centerx >= self.x) or (self.direction == "left" and player_mod.player_pos.centerx <= self.x):
+            if (self.direction == "right" and player_mod.player_pos.centerx >= self.x) or (
+                    self.direction == "left" and player_mod.player_pos.centerx <= self.x):
                 if cooldown == 0:
                     print('debug: enemy ready to shoot')
                     y = self.rect.centery
                     x = self.rect.centerx
                     shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 15, self.surface, self.direction, self))
-                    cooldown = 60
+                    cooldown = 20
                 else:
                     cooldown -= 1
         else:
             self.is_shooting = False
             #print('debug: enemy mot aiming')
 
-    def try_shooting(self):
+
+class Sniper(Enemy):
+    def __init__(self, x, y, color, speed, surface, direction, player, current_layer):
+        super().__init__(x, y, color, speed, surface, direction, player, current_layer)
+        self.is_shooting = False
+        self.delay = 500
+        self.last_time = 0
+        self.last_time_walk = 0
+        self.already_shot = False
+
+        self.wandering = True
+        self.shooting_at_player = False
+        self.found_player = False
+
+    def act(self):
+        self.drawEnemy()
+        self.wander()
+        self.enemy_hit_player(self.player)
+        self.see_player()
+
+    def see_player(self):
         global cooldown
-        # print('debug: running try_shooting function')
-        if self.is_shooting == True:
-            if cooldown == 0:
-                #print('debug: enemy ready to shoot')
-                #y = self.rect.centery
-                #x = self.rect.centerx
-                #shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 5, self.surface, self.direction, self))
-                cooldown = 30
+        current_time = pygame.time.get_ticks()
+        distance = abs(self.x - player_mod.player_pos.x)
+
+        if distance < 40 and self.current_layer != player_mod.current_layer and self.found_player == False:
+            self.shooting_at_player = True
+            self.wandering = False
+            self.found_player = True
+            print(f"debug: achou player ? {self.found_player}")
+
+        if distance > 50 and self.current_layer != player_mod.current_layer and self.found_player == True:
+            self.already_shot = False
+            self.found_player = False
+            print(f"debug: deixou o player em paz ? {self.found_player}")
+
+        if self.already_shot:
+            if current_time - self.last_time >= self.delay:
+                self.wandering = True
+                self.shooting_at_player = False
+                self.last_time= current_time
+
+        if self.shooting_at_player:
+            self.wandering = False
+            if current_time - self.last_time_walk >= self.delay:
+                self.shoot()
+                print(f"debug: atirou")
+                self.already_shot = True
+                self.last_time_walk = current_time
+
         else:
-            if cooldown >= 0:
-                cooldown -= 1
+            self.wandering = True
+            if current_time - self.last_time_walk >= self.delay:
+                self.already_shot = False
+                self.last_time_walk = current_time
+
+        if self.wandering:
+            self.speed = 5
+        else:
+            self.speed = 0
+
+    def shoot(self):
+        global sniper_cooldown
+        current_time = pygame.time.get_ticks()
+
+        if sniper_cooldown == 0:
+            print('debug: enemy ready to shoot')
+            y = self.rect.centery
+            x = self.rect.centerx
+            shot_mod.active_projectiles.append(shot_mod.VerticalShot(x, y, 15,
+                                                                     self.surface, self.direction, self, player_mod))
+            sniper_cooldown = 0
+            self.last_time = current_time
+
+        else:
+            sniper_cooldown -= 1

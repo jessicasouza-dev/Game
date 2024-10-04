@@ -48,3 +48,18 @@ class Shot:
         if self.rect.colliderect(player_mod.player_pos):
             life_mod.lose_life()
             self.destroy()
+
+
+class VerticalShot(Shot):
+    def __init__(self, x, y, speed, surface, direction, enemy, player):
+        super().__init__(x, y, speed, surface, direction, enemy)
+        self.player = player
+
+    def move(self):
+        if self.player.current_layer >= self.enemy.current_layer:
+            self.rect.centery += self.speed
+        else:
+            self.rect.centery -= self.speed
+
+        if self.rect.top < screen.get_rect().top or self.rect.bottom > screen.get_rect().bottom:
+            self.destroy()

@@ -41,6 +41,13 @@ class Wave:
                 self.enemy.surface, self.enemy.direction, self.enemy.player, number
             )
             self.enemies.append(enemy_instance)
+
+        elif self.enemy_class == 'Sniper':
+            enemy_instance = enemy.Sniper(
+                self.enemy.x, floor, self.enemy.color, self.enemy.speed,
+                self.enemy.surface, self.enemy.direction, self.enemy.player, number
+            )
+            self.enemies.append(enemy_instance)
         print(f"new enemy {self.enemies_added + 1}")
         self.enemies_added += 1
 

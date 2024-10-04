@@ -65,12 +65,11 @@ shoot_direction = 'right'
 # main loop
 game_loop = True
 
-enemy = enemy_mod.Shooter(0, floor_mod.floors_bottom_y_list[1], enemy_mod.enemy_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
+enemy = enemy_mod.Sniper(0, floor_mod.floors_bottom_y_list[1], enemy_mod.enemy_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
 enemy2 = enemy_mod.Enemy(0, floor_mod.floors_bottom_y_list[1], player_mod.player_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
-wave1 = wave_mod.Wave(1, enemy, 2, "Shooter")
-wave1 = wave_mod.Wave(2, enemy, 2, "Shooter")
-wave2 = wave_mod.Wave(3, enemy2, 2, "Enemy")
-wave3 = wave_mod.Wave(5, enemy2, 2, "Enemy")
+wave1 = wave_mod.Wave(8, enemy, 2, "Enemy")
+wave2 = wave_mod.Wave(3, enemy2, 2, "Shooter")
+wave3 = wave_mod.Wave(5, enemy2, 2, "Sniper")
 waves = [wave1, wave2, wave3]
 
 while game_loop == True:
@@ -121,7 +120,6 @@ while game_loop == True:
                 player_move_down = False
             if event.key == pygame.K_SPACE:
                 player_shoot = False
-                
             if event.key == pygame.K_UP:
                 player_shoot = False
             if event.key == pygame.K_DOWN:
