@@ -60,10 +60,8 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
     # if movement boolean values match, move player position
     if player_move_left == True and player_move_right == False:
         player_pos.x -= player_move_speed
-        current_direction = 'left'
     if player_move_right == True and player_move_left == False:
         player_pos.x += player_move_speed
-        current_direction = 'right'
 
     # if player is out of bounds, relocate to valid position
     if player_pos.left < screen.get_rect().left:
@@ -88,14 +86,18 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
 
     player_pos.bottom = floor_mod.floors_bottom_y_list[current_layer]
 
-def try_shooting(is_shooting):
+def try_shooting(is_shooting, direction):
     global shooting_cooldown
+    global current_direction
     #print('debug: running try_shooting function')
 
-    if shooting_cooldown == 0:
+    current_direction = direction
+
+    if shooting_cooldown <= 0:
         if is_shooting:
             y = player_pos.centery
-            player_shots_mod.active_friendly_projectiles.append(player_shots_mod.player_projectile(player_pos.centerx, y, current_direction))
+            for shot in range(player_shots_mod.multishot_value):
+                player_shots_mod.active_friendly_projectiles.append(player_shots_mod.player_projectile(player_pos.centerx, y, current_direction))
             shooting_cooldown = player_shots_mod.cooldown_value
         #print('debug: player ready to shoot')
     else:

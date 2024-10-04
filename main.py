@@ -13,6 +13,7 @@ import shot as shot_mod
 import enemy as enemy_mod
 import life as life_mod
 import wave_controller as wave_controller_mod
+import power_ups as power_up_mod
 import wave as wave_mod
 
 folder_path = os.path.dirname(__file__)
@@ -22,11 +23,44 @@ screen = scrn_mod.screen
 temporary_screen_color = (252, 252, 252)
 player_move_left = player_move_right = player_move_up = player_move_down = player_shoot = False
 
-
 pygame.init()
 
 floor_mod.create_floors()
 player_mod.player_spawn()
+
+# instant power ups for the purposes of testing
+power_up_mod.powerup_pierceup()
+power_up_mod.powerup_multishot()
+power_up_mod.powerup_multishot()
+power_up_mod.powerup_multishot()
+power_up_mod.powerup_multishot()
+power_up_mod.powerup_multishot()
+power_up_mod.powerup_multishot()
+power_up_mod.powerup_multishot()
+power_up_mod.powerup_multishot()
+power_up_mod.powerup_multishot()
+power_up_mod.powerup_multishot()
+power_up_mod.powerup_firerateup()
+power_up_mod.powerup_firerateup()
+power_up_mod.powerup_firerateup()
+power_up_mod.powerup_firerateup()
+power_up_mod.powerup_firerateup()
+power_up_mod.powerup_firerateup()
+power_up_mod.powerup_firerateup()
+power_up_mod.powerup_move_speed()
+power_up_mod.powerup_move_speed()
+power_up_mod.powerup_move_speed()
+power_up_mod.powerup_move_speed()
+power_up_mod.powerup_move_speed()
+power_up_mod.powerup_climb_speed()
+power_up_mod.powerup_climb_speed()
+power_up_mod.powerup_climb_speed()
+power_up_mod.powerup_damageup()
+power_up_mod.powerup_damageup()
+power_up_mod.powerup_damageup()
+power_up_mod.powerup_damageup()
+
+shoot_direction = 'right'
 
 # main loop
 game_loop = True
@@ -40,6 +74,7 @@ wave3 = wave_mod.Wave(5, enemy2, 2, "Enemy")
 waves = [wave1, wave2, wave3]
 
 while game_loop == True:
+
     screen.fill(temporary_screen_color)
     floor_mod.render_floors()
 
@@ -49,45 +84,58 @@ while game_loop == True:
             pygame.quit()
         
         if event.type == pygame.KEYDOWN:
-            #print('debug: key pressed')
+            # movement controls
             if event.key == pygame.K_a:
                 player_move_left = True
-                #print('debug: A press')
             if event.key == pygame.K_d:
                 player_move_right = True
-                #print('debug: D press')
             if event.key == pygame.K_w:
                 player_move_up = True
-                #print('debug: W press')
             if event.key == pygame.K_s:
                 player_move_down = True
-                #print('debug: S press')
             if event.key == pygame.K_SPACE:
+                pass
+
+            # directional shooting controls
+            if event.key == pygame.K_UP:
+                shoot_direction = 'up'
                 player_shoot = True
-                #print('debug: spacebar press')
+            if event.key == pygame.K_DOWN:
+                shoot_direction = 'down'
+                player_shoot = True
+            if event.key == pygame.K_LEFT:
+                shoot_direction = 'left'
+                player_shoot = True
+            if event.key == pygame.K_RIGHT:
+                shoot_direction = 'right'
+                player_shoot = True
+
         if event.type == pygame.KEYUP:
             if event.key == pygame.K_a:
                 player_move_left = False
-                #print('debug: A release')
             if event.key == pygame.K_d:
                 player_move_right = False
-                #print('debug: D release')
             if event.key == pygame.K_w:
                 player_move_up = False
-                #print('debug: W release')
             if event.key == pygame.K_s:
                 player_move_down = False
-                #print('debug: S release')
             if event.key == pygame.K_SPACE:
                 player_shoot = False
-                #print('debug: spacebar release')
-
+                
+            if event.key == pygame.K_UP:
+                player_shoot = False
+            if event.key == pygame.K_DOWN:
+                player_shoot = False
+            if event.key == pygame.K_LEFT:
+                player_shoot = False
+            if event.key == pygame.K_RIGHT:
+                player_shoot = False
 
     player_mod.player_movement(player_move_left, player_move_right, player_move_up, player_move_down)
     for projectile in player_shots_mod.active_friendly_projectiles:
         projectile.move()
 
-    player_mod.try_shooting(player_shoot)
+    player_mod.try_shooting(player_shoot, shoot_direction)
     life_mod.show_life()
     player_mod.player_render()
     wave_controller_mod.control_waves(waves)

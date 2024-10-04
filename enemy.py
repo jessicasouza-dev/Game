@@ -99,14 +99,14 @@ class Shooter(Enemy):
                     cooldown -= 1
         else:
             self.is_shooting = False
-            print('debug: enemy mot aiming')
+            #print('debug: enemy mot aiming')
 
     def try_shooting(self):
         global cooldown
         # print('debug: running try_shooting function')
         if self.is_shooting == True:
             if cooldown == 0:
-                print('debug: enemy ready to shoot')
+                #print('debug: enemy ready to shoot')
                 #y = self.rect.centery
                 #x = self.rect.centerx
                 #shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 5, self.surface, self.direction, self))
