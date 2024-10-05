@@ -21,11 +21,8 @@ class Wave:
         self.last_spawn_time = 0
         self.enemies = []
         self.enemies_added = 0
-        self.enemies_number = 0
+        self.enemies_number = sum(enemies_dictionary.values())
         self.isActive = True
-
-        for enemy_class, count in enemies_dictionary.items():
-            self.enemies_number += count
 
     def add_enemies(self):
         current_time = pygame.time.get_ticks()
@@ -66,7 +63,7 @@ class Wave:
             for enemy in self.enemies:
                 enemy.act()
 
-            if len(self.enemies) == 0 and self.enemies_added > 0:
+            if len(self.enemies) == 0 and self.enemies_added == self.enemies_number > 0:
                 self.isActive = False
 
     def restart_waves(self):

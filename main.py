@@ -40,8 +40,21 @@ shoot_direction = 'right'
 # main loop
 game_loop = True
 
-wave1 = wave_mod.Wave(wave_controller_mod.wave_config1)
-waves = [wave1]
+wave_config1 = {
+    'Shooter': 1,
+    'Enemy': 0,
+    'Sniper': 1
+}
+
+wave_config2 = {
+    'Shooter': 0,
+    'Enemy': 1,
+    'Sniper': 0
+}
+
+wave1 = wave_mod.Wave(wave_config1)
+wave2 = wave_mod.Wave(wave_config2)
+waves = [wave1, wave2]
 
 while game_loop == True:
 
@@ -110,7 +123,8 @@ while game_loop == True:
     life_mod.show_life()
     player_mod.player_render()
     wave_controller_mod.control_waves(waves)
-    if wave_controller_mod.pwrup_selection == True:
+
+    if wave_controller_mod.is_power_picked == False and wave_controller_mod.current_wave.isActive == False:
         power_up_mod.do_selection(spacebar)
         textbox_mod.display_powerup_info()
 

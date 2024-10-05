@@ -6,6 +6,7 @@ import life as life_mod
 import math
 import random
 import screen as screen_mod
+import wave_controller as wave_controller_mod
 
 screen = screen_mod.screen
 pwrups_shuffled = False
@@ -195,3 +196,4 @@ def do_selection(is_selecting):
                     print(effect)
                 pwrups_picked = True
                 #commands to continue next wave here
+                wave_controller_mod.is_power_picked = True
