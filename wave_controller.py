@@ -10,8 +10,10 @@ import enemy as enemy_mod
 import wave as wave_mod
 import life as life_mod
 
+wave_config = {}
+
 last_number = 0
-current_wave = wave_mod.Wave(1, enemy, 2, "Enemy")
+current_wave = wave_mod.Wave(wave_config)
 delay = 10000
 last_time = 0
 
@@ -22,21 +24,23 @@ def control_waves(waves):
     global current_wave
     global delay
     global last_time
+    global wave_config
 
     time = pygame.time.get_ticks()
+    wave_config = waves[last_number].enemies_dictionary
 
-    if last_number + 1 <= len(waves) - 1:
+    if last_number < len(waves):
         current_wave = waves[last_number]
 
-    if current_wave.isActive == True:
-        current_wave.update()
-    else:
-        if last_number + 1 <= len(waves) - 1 and time - last_time >= delay:
-            print(time)
-            print(last_time)
-            last_number += 1
-            current_wave = waves[last_number]
-            last_time = time
+        if current_wave.isActive == True:
+            current_wave.update()
+        else:
+            if last_number + 1 <= len(waves) - 1 and time - last_time >= delay:
+                print(time)
+                print(last_time)
+                last_number += 1
+                current_wave = waves[last_number]
+                last_time = time
 
-    if last_number == len(waves) - 1 and current_wave.isActive == False:
-        print("wave acabou")
+        if last_number == len(waves) - 1 and current_wave.isActive == False:
+            print("wave acabou")

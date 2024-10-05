@@ -6,58 +6,62 @@ import floors as floor_mod
 import player_behavior as player_mod
 import random as random
 import life as life_mod
+import enemy as enemy_mod
+import wave_controller as wave_controller_mod
 
-
-
+need_to_switch = False
 
 class Wave:
-    def __init__(self, enemies_number, enemy, wave_number, enemy_class):
+    def __init__(self, enemies_dictionary):
         super().__init__()
+
+        self.enemies_dictionary = enemies_dictionary
 
         self.spawn_delay = 900
         self.last_spawn_time = 0
         self.enemies = []
-        self.enemies_number = enemies_number
-        self.enemy = enemy
-        self.current_wave = 0
-        self.enemy_class = enemy_class
-        self.wave_number = wave_number
         self.enemies_added = 0
+        self.enemies_number = 0
         self.isActive = True
 
+        for enemy_class, count in enemies_dictionary.items():
+            self.enemies_number += count
+
     def add_enemies(self):
+        current_time = pygame.time.get_ticks()
 
-        number = random.randint(0, len(floor_mod.floors_bottom_y_list) - 1)
-        floor = floor_mod.floors_bottom_y_list[number]
-        if self.enemy_class == 'Shooter':
-            enemy_instance = enemy.Shooter(
-                self.enemy.x, floor, self.enemy.color, self.enemy.speed,
-                self.enemy.surface, self.enemy.direction, self.enemy.player, number
-            )
-            self.enemies.append(enemy_instance)
-        elif self.enemy_class == 'Enemy':
-            enemy_instance = enemy.Enemy(
-                self.enemy.x, floor, self.enemy.color, self.enemy.speed,
-                self.enemy.surface, self.enemy.direction, self.enemy.player, number
-            )
-            self.enemies.append(enemy_instance)
+        if current_time - self.last_spawn_time < self.spawn_delay:
+            return
 
-        elif self.enemy_class == 'Sniper':
-            enemy_instance = enemy.Sniper(
-                self.enemy.x, floor, self.enemy.color, self.enemy.speed,
-                self.enemy.surface, self.enemy.direction, self.enemy.player, number
-            )
-            self.enemies.append(enemy_instance)
-        print(f"new enemy {self.enemies_added + 1}")
-        self.enemies_added += 1
+        if self.enemies_added < self.enemies_number:
+
+            enemy_class = random.choice(list(self.enemies_dictionary.keys()))
+            count = self.enemies_dictionary[enemy_class]
+
+            if count > 0:
+
+                number = random.randint(0, len(floor_mod.floors_bottom_y_list) - 1)
+                floor = floor_mod.floors_bottom_y_list[number]
+
+                if enemy_class == 'Shooter':
+                    enemy_instance = enemy.Shooter(0, floor, 5,
+                                                    scrn_mod.screen, "right", player_mod.player_pos, number)
+                elif enemy_class == 'Enemy':
+                    enemy_instance = enemy.Enemy(0, floor, 5,
+                                                 scrn_mod.screen, "right", player_mod.player_pos, number)
+                elif enemy_class == 'Sniper':
+                    enemy_instance = enemy.Sniper(0, floor, 5,
+                                                   scrn_mod.screen, "right", player_mod.player_pos, number)
+
+                self.enemies.append(enemy_instance)
+                self.enemies_dictionary[enemy_class] -= 1
+                self.enemies_added += 1
+                self.last_spawn_time = current_time
 
     def update(self):
         if self.isActive:
-            current_time = pygame.time.get_ticks()
 
-            if current_time - self.last_spawn_time >= self.spawn_delay and self.enemies_added < self.enemies_number:
-                self.add_enemies()
-                self.last_spawn_time = current_time
+            self.add_enemies()
 
             for enemy in self.enemies:
                 enemy.act()
