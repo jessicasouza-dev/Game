@@ -9,6 +9,7 @@ import os
 import enemy as enemy_mod
 import waves as wave_mod
 import life as life_mod
+import power_ups as pwrup_mod
 
 wave_config = {}
 
@@ -19,12 +20,21 @@ last_time = 0
 
 current_time = pygame.time.get_ticks()
 
+pwrup_selection = False
+
+wave_config1 = {
+    'Shooter': 1,
+    'Enemy': 0,
+    'Sniper': 1
+}
+
 def control_waves(waves):
     global last_number
     global current_wave
     global delay
     global last_time
     global wave_config
+    global pwrup_selection
 
     time = pygame.time.get_ticks()
     wave_config = waves[last_number].enemies_dictionary
@@ -43,7 +53,12 @@ def control_waves(waves):
                 last_time = time
 
         if last_number == len(waves) - 1 and current_wave.isActive == False:
-            print("wave acabou")
+            if pwrup_mod.pwrups_shuffled == False:
+                pwrup_mod.randomize_bundles()
+            pwrup_selection = True
+            pwrup_mod.pwrups_picked = False
+        else:
+            pwrup_selection = False
 
 def change_last_number():
     global last_number

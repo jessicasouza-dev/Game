@@ -16,69 +16,38 @@ import wave_controller as wave_controller_mod
 import power_ups as power_up_mod
 import waves as wave_mod
 import wave_controller as wave_controller_mod
+import text_display as textbox_mod
 
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
 
 screen = scrn_mod.screen
 temporary_screen_color = (252, 252, 252)
-player_move_left = player_move_right = player_move_up = player_move_down = player_shoot = False
+player_move_left = player_move_right = player_move_up = player_move_down = player_shoot = spacebar = False
 
 pygame.init()
 
 floor_mod.create_floors()
 player_mod.player_spawn()
-
+power_up_mod.randomize_bundles()
 
 # instant power ups for the purposes of testing
-power_up_mod.powerup_pierceup()
-power_up_mod.powerup_multishot()
-power_up_mod.powerup_multishot()
-power_up_mod.powerup_multishot()
-power_up_mod.powerup_multishot()
-power_up_mod.powerup_multishot()
-power_up_mod.powerup_multishot()
-power_up_mod.powerup_multishot()
-power_up_mod.powerup_multishot()
-power_up_mod.powerup_multishot()
-power_up_mod.powerup_multishot()
-power_up_mod.powerup_firerateup()
-power_up_mod.powerup_firerateup()
-power_up_mod.powerup_firerateup()
-power_up_mod.powerup_firerateup()
-power_up_mod.powerup_firerateup()
-power_up_mod.powerup_firerateup()
-power_up_mod.powerup_firerateup()
-power_up_mod.powerup_move_speed()
-power_up_mod.powerup_move_speed()
-power_up_mod.powerup_move_speed()
-power_up_mod.powerup_move_speed()
-power_up_mod.powerup_move_speed()
-power_up_mod.powerup_climb_speed()
-power_up_mod.powerup_climb_speed()
-power_up_mod.powerup_climb_speed()
-power_up_mod.powerup_damageup()
-power_up_mod.powerup_damageup()
-power_up_mod.powerup_damageup()
-power_up_mod.powerup_damageup()
+None
+
 
 shoot_direction = 'right'
 
 # main loop
 game_loop = True
 
-wave_config2 = {
-    'Shooter': 1,
-    'Enemy': 0,
-    'Sniper': 0
-}
-wave1 = wave_mod.Wave(wave_config2)
+wave1 = wave_mod.Wave(wave_controller_mod.wave_config1)
 waves = [wave1]
 
 while game_loop == True:
 
     screen.fill(temporary_screen_color)
     floor_mod.render_floors()
+    spacebar = False
 
     for event in pygame.event.get():
         if event.type == pygame.QUIT:
@@ -96,7 +65,8 @@ while game_loop == True:
             if event.key == pygame.K_s:
                 player_move_down = True
             if event.key == pygame.K_SPACE:
-                pass
+                spacebar = True
+
 
             # directional shooting controls
             if event.key == pygame.K_UP:
@@ -140,6 +110,9 @@ while game_loop == True:
     life_mod.show_life()
     player_mod.player_render()
     wave_controller_mod.control_waves(waves)
+    if wave_controller_mod.pwrup_selection == True:
+        power_up_mod.do_selection(spacebar)
+        textbox_mod.display_powerup_info()
 
     for projectile in player_shots_mod.active_friendly_projectiles:
         projectile.render()
@@ -148,7 +121,7 @@ while game_loop == True:
     for projectile in shot_mod.active_projectiles:
         projectile.update()
 
-        
+
     if life_mod.life == 0:
         wave_controller_mod.current_wave.restart_waves()
         life_mod.life = life_mod.max_life

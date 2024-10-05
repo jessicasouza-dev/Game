@@ -4,9 +4,20 @@ import floors as floor_mod
 import player_behavior as player_mod
 import life as life_mod
 import math
+import random
+import screen as screen_mod
 
+screen = screen_mod.screen
+pwrups_shuffled = False
+pwrups_picked = False
+
+power_up_collectible_size = 100
+display_text_1 = ''
+display_text_2 = ''
+
+plus_sprite = pygame.image.load('assets/power_up_sprites/+.jpg')
 def powerup_damageup():
-    # +10% damage, additively
+    # +20% damage, additively
     # size up slightly
     # shot flight speed down slightly
     shots_mod.damage_value += 20
@@ -36,7 +47,7 @@ def powerup_pierceup():
 
 def powerup_move_speed():
     # +25% player sideways movement speed, additively
-    player_mod.player_move_speed += player_mod.PLAYER_BASE_SPEED * 0.25
+    player_mod.player_move_speed += player_mod.PLAYER_BASE_SPEED * 1.25
     round(player_mod.player_move_speed)
 
 def powerup_climb_speed():
@@ -60,3 +71,125 @@ def powerup_health_boost():
     #increase maximum health by 25, also heals by 25
     life_mod.max_life += 25
     life_mod.life += 25
+
+offense_powerups = [powerup_damageup, powerup_firerateup, powerup_pierceup, powerup_multishot]
+support_powerups = [powerup_move_speed, powerup_climb_speed, powerup_instaheal, powerup_full_heal, powerup_health_boost]
+
+pwrup_bundle_1 = []
+pwrup_bundle_2 = []
+pwrup_bundle_3 = []
+
+bundle_list = [pwrup_bundle_1, pwrup_bundle_2, pwrup_bundle_3]
+
+class powerup:
+    def __init__(self, pwrup_func, rect):
+        self.effect = pwrup_func
+        self.rect = rect
+
+        if self.effect == powerup_damageup:
+            self.sprite = pygame.image.load('assets/power_up_sprites/damage_up_placeholder.jpg')
+            self.text = "+20% damage!"
+        elif self.effect == powerup_firerateup:
+            self.sprite = pygame.image.load('assets/power_up_sprites/fire_rate_up_placeholder.jpg')
+            self.text = "Shoot 25% faster!"
+        elif self.effect == powerup_pierceup:
+            self.sprite = pygame.image.load('assets/power_up_sprites/pierce_up_placeholder.png')
+            self.text = "Shots can cross 1 additional\nfloor or enemy without\n being destroyed!"
+        elif self.effect == powerup_multishot:
+            self.sprite = pygame.image.load('assets/power_up_sprites/multishot_placeholder.jpg')
+            self.text = "Fire more bullets per shot!"
+        elif self.effect == powerup_move_speed:
+            self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_leftright_placeholder.jpg')
+            self.text = "Movement speed increased by 25%!"
+        elif self.effect == powerup_climb_speed:
+            self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_updown_placeholder.jpg')
+            self.text = "Up/down climbing speed increased by 20%!\nDoes nothing if you already collected this\nupgrade 5 times."
+        elif self.effect == powerup_instaheal:
+            self.sprite = pygame.image.load('assets/power_up_sprites/small_heal_placeholder.jpg')
+            self.text = "Recover 30% of your maximum health!"
+        elif self.effect == powerup_full_heal:
+            self.sprite = pygame.image.load('assets/power_up_sprites/full_heal_placeholder.jpg')
+            self.text = "Recover all of your health!"
+        elif self.effect == powerup_health_boost:
+            self.sprite = pygame.image.load('assets/power_up_sprites/max_health_up_placeholder.jpg')
+            self.text = "Increase maximum health by 25!"
+
+        self.sprite = pygame.transform.scale(self.sprite, (power_up_collectible_size, power_up_collectible_size))
+
+    def render(self):
+        screen.blit(self.sprite, self.rect)
+
+def randomize_bundles():
+    global bundle_list
+    global pwrup_bundle_1
+    global pwrup_bundle_2
+    global pwrup_bundle_3
+    global pwrups_shuffled
+
+    bundle_list = []
+    support_copy = support_powerups
+    offense_copy = offense_powerups
+    for bundle in range(3):
+        bundle = []
+
+        support = random.choice(support_copy)
+        support_copy.remove(support)
+
+        offensive = random.choice(offense_copy)
+        offense_copy.remove(offensive)
+
+        bundle.append(offensive)
+        bundle.append(support)
+
+        bundle_list.append(bundle)
+    
+    pwrups_shuffled = True
+
+
+def do_selection(is_selecting):
+    global pwrups_picked
+    global display_text_1
+    global display_text_2
+
+    floors_bottom_y_list = floor_mod.floors_bottom_y_list
+    for n in range(1, 4):
+        ground_y = floors_bottom_y_list[n]
+        rect_1 = pygame.Rect(0, 0, power_up_collectible_size, power_up_collectible_size)
+        rect_1.bottom = ground_y
+        rect_1.centerx = (floor_mod.floor_size_x / 2) - 100
+
+        rect_2 = pygame.Rect(0, 0, power_up_collectible_size, power_up_collectible_size)
+        rect_2.bottom = ground_y
+        rect_2.centerx = (floor_mod.floor_size_x / 2) + 100
+
+        pwrup_1 = powerup(bundle_list[n-2][0], rect_1)
+        pwrup_2 = powerup(bundle_list[n-2][1], rect_2)
+
+        display_text_1 = pwrup_1.text
+        display_text_2 = pwrup_2.text
+
+        pwrup_1.render()
+        pwrup_2.render()
+        plus_rect = pygame.Rect(0, 0, 66, 66)
+        plus_rect.centerx = floor_mod.floor_size_x / 2
+        plus_rect.bottom = ground_y
+        screen.blit(plus_sprite, plus_rect)
+
+        local_pwrup_bundle = [pwrup_1.effect, pwrup_2.effect]
+        rect_list = [rect_1, rect_2]
+
+        is_touching_list = False
+        for x in rect_list:
+            if player_mod.player_pos.colliderect(x):
+                is_touching_list = True
+                print(f'debug: player is touching {local_pwrup_bundle}')
+
+        if is_selecting == True and pwrups_picked == False:
+            print('debug: attempting to pick upgrade')
+            if is_touching_list:
+                print('debug: upgrade obtained')
+                for effect in local_pwrup_bundle:
+                    effect()
+                    print(effect)
+                pwrups_picked = True
+                #commands to continue next wave here
