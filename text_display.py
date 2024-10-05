@@ -6,17 +6,19 @@ import floors as floor_mod
 import screen as screen_mod
 
 screen = screen_mod.screen
-upgrade_textbox_font = pygame.font.Font('assets\3_Minecraft-Bold.otf')
 textbox_color = (64, 0, 20)
 
 powerup_textbox_firsthalf = pygame.Rect(0, 0, 0, 0)
 powerup_textbox_secondhalf = pygame.Rect(0, 0, 0, 0)
 
+# display textboxes with information about power-ups the player is selecting
 def display_powerup_info():
 
+    # text to be displayed in the textboxes
     text_1 = pwrup_mod.display_text_1
     text_2 = pwrup_mod.display_text_2
 
+    # relocating position of the textboxes
     powerup_textbox_firsthalf.width = floor_mod.floor_size_x / 3
     powerup_textbox_secondhalf.width = floor_mod.floor_size_x / 3
     powerup_textbox_firsthalf.height = floor_mod.floor_size_y * (3/4)
@@ -32,3 +34,5 @@ def display_powerup_info():
     
     pygame.draw.rect(screen, textbox_color, powerup_textbox_firsthalf)
     pygame.draw.rect(screen, textbox_color, powerup_textbox_secondhalf)
+
+    print(text_1 + text_2)

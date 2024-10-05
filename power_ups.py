@@ -97,7 +97,7 @@ class powerup:
             self.text = "Shots can cross 1 additional\nfloor or enemy without\n being destroyed!"
         elif self.effect == powerup_multishot:
             self.sprite = pygame.image.load('assets/power_up_sprites/multishot_placeholder.jpg')
-            self.text = "Fire more bullets per shot!"
+            self.text = "Fire more bullets per shot at the cost of reduced damage!\nstill increases total DPS."
         elif self.effect == powerup_move_speed:
             self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_leftright_placeholder.jpg')
             self.text = "Movement speed increased by 25%!"
@@ -119,6 +119,7 @@ class powerup:
     def render(self):
         screen.blit(self.sprite, self.rect)
 
+# shuffle available upgrades before showcasing them to the player
 def randomize_bundles():
     global bundle_list
     global pwrup_bundle_1
@@ -165,9 +166,6 @@ def do_selection(is_selecting):
         pwrup_1 = powerup(bundle_list[n-2][0], rect_1)
         pwrup_2 = powerup(bundle_list[n-2][1], rect_2)
 
-        display_text_1 = pwrup_1.text
-        display_text_2 = pwrup_2.text
-
         pwrup_1.render()
         pwrup_2.render()
         plus_rect = pygame.Rect(0, 0, 66, 66)
@@ -178,12 +176,16 @@ def do_selection(is_selecting):
         local_pwrup_bundle = [pwrup_1.effect, pwrup_2.effect]
         rect_list = [rect_1, rect_2]
 
+        # check if player is coming in contact with the upgrade
         is_touching_list = False
         for x in rect_list:
             if player_mod.player_pos.colliderect(x):
                 is_touching_list = True
                 print(f'debug: player is touching {local_pwrup_bundle}')
+                display_text_1 = pwrup_1.text
+                display_text_2 = pwrup_2.text
 
+        # check if player is trying to pick up upgrade
         if is_selecting == True and pwrups_picked == False:
             print('debug: attempting to pick upgrade')
             if is_touching_list:

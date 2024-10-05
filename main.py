@@ -121,7 +121,6 @@ while game_loop == True:
     for projectile in shot_mod.active_projectiles:
         projectile.update()
 
-
     if life_mod.life == 0:
         wave_controller_mod.current_wave.restart_waves()
         life_mod.life = life_mod.max_life
