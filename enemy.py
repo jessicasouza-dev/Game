@@ -19,6 +19,8 @@ cooldown = 0
 sniper_cooldown = 0
 delay = 100
 
+time = 60
+
 
 class Enemy:
     def __init__(self, x, y, speed, surface, direction, player, current_layer):
@@ -79,6 +81,10 @@ class Shooter(Enemy):
     def __init__(self, x, y, speed, surface, direction, player, current_layer):
         super().__init__(x, y, speed, surface, direction, player, current_layer)
         self.is_shooting = False
+        self.delay = 500
+        self.last_time = 0
+        self.already_shot = False
+        self.switch = False
 
     def act(self):
         self.drawEnemy()
@@ -88,22 +94,37 @@ class Shooter(Enemy):
         self.see_player()
 
     def see_player(self):
-        global cooldown
-        if self.current_layer == player_mod.current_layer:
+        global time
 
+        distance = abs(self.x - player_mod.player_pos.x)
+
+        if self.current_layer == player_mod.current_layer:
             if (self.direction == "right" and player_mod.player_pos.centerx >= self.x) or (
                     self.direction == "left" and player_mod.player_pos.centerx <= self.x):
-                if cooldown == 0:
-                    print('debug: enemy ready to shoot')
-                    y = self.rect.centery
-                    x = self.rect.centerx
-                    shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 15, self.surface, self.direction, self))
-                    cooldown = 20
-                else:
-                    cooldown -= 1
+
+                if time > 0:
+                    self.speed = 0
+                    print(f"debug time: {time}")
+                    time -= 1
+                elif time == 0:
+                    print(f"debug can shot: {time}")
+                    self.speed = 5
+                    self.shoot()
         else:
-            self.is_shooting = False
-            #print('debug: enemy mot aiming')
+            if time != 60 and time > 0:
+                time -= 1
+
+    def shoot(self):
+        global cooldown
+        if cooldown == 0:
+            print('debug: enemy ready to shoot')
+            y = self.rect.centery
+            x = self.rect.centerx
+            shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 15, self.surface, self.direction, self))
+            cooldown = 20
+        elif cooldown != 0:
+            cooldown -= 1
+
 
 
 class Sniper(Enemy):
@@ -131,7 +152,7 @@ class Sniper(Enemy):
         current_time = pygame.time.get_ticks()
         distance = abs(self.x - player_mod.player_pos.x)
 
-        if distance < 40 and self.current_layer != player_mod.current_layer and self.found_player == False:
+        if distance < 20 and self.current_layer != player_mod.current_layer and self.found_player == False:
             self.shooting_at_player = True
             self.wandering = False
             self.found_player = True

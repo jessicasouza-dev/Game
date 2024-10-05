@@ -9,15 +9,15 @@ import life as life_mod
 import enemy as enemy_mod
 import wave_controller as wave_controller_mod
 
-need_to_switch = False
+cooldown = 60
 
 class Wave:
     def __init__(self, enemies_dictionary):
         super().__init__()
 
         self.enemies_dictionary = enemies_dictionary
-
-        self.spawn_delay = 900
+        self.enemies_dictionary_iteratable = self.enemies_dictionary.copy()
+        self.spawn_delay = 3000
         self.last_spawn_time = 0
         self.enemies = []
         self.enemies_added = 0
@@ -35,8 +35,8 @@ class Wave:
 
         if self.enemies_added < self.enemies_number:
 
-            enemy_class = random.choice(list(self.enemies_dictionary.keys()))
-            count = self.enemies_dictionary[enemy_class]
+            enemy_class = random.choice(list(self.enemies_dictionary_iteratable.keys()))
+            count = self.enemies_dictionary_iteratable[enemy_class]
 
             if count > 0:
 
@@ -54,7 +54,7 @@ class Wave:
                                                    scrn_mod.screen, "right", player_mod.player_pos, number)
 
                 self.enemies.append(enemy_instance)
-                self.enemies_dictionary[enemy_class] -= 1
+                self.enemies_dictionary_iteratable[enemy_class] -= 1
                 self.enemies_added += 1
                 self.last_spawn_time = current_time
 
@@ -70,10 +70,14 @@ class Wave:
                 self.isActive = False
 
     def restart_waves(self):
+
+        self.enemies_dictionary_iteratable = self.enemies_dictionary.copy()
         self.enemies.clear()
         self.last_spawn_time = 0
         self.enemies_added = 0
+        self.enemies_number = sum(self.enemies_dictionary.values())
 
+        print(f"{self.enemies_dictionary}")
         life_mod.life = life_mod.max_life
         player_mod.player_spawn()
         player_mod.player_render()
