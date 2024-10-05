@@ -41,7 +41,7 @@ shoot_direction = 'right'
 game_loop = True
 
 wave_config1 = {
-    'Shooter': 1,
+    'Shooter': 0,
     'Enemy': 0,
     'Sniper': 1
 }
@@ -52,9 +52,16 @@ wave_config2 = {
     'Sniper': 0
 }
 
+wave_config3 = {
+    'Shooter': 0,
+    'Enemy': 1,
+    'Sniper': 0
+}
+
 wave1 = wave_mod.Wave(wave_config1)
 wave2 = wave_mod.Wave(wave_config2)
-waves = [wave1, wave2]
+wave3 = wave_mod.Wave(wave_config2)
+waves = [wave1, wave2, wave3]
 
 while game_loop == True:
 
@@ -124,7 +131,7 @@ while game_loop == True:
     player_mod.player_render()
     wave_controller_mod.control_waves(waves)
 
-    if wave_controller_mod.is_power_picked == False and wave_controller_mod.current_wave.isActive == False:
+    if wave_controller_mod.is_power_picked == False and wave_controller_mod.current_wave.isActive == False and wave_controller_mod.is_over == False:
         power_up_mod.do_selection(spacebar)
         textbox_mod.display_powerup_info()
 
@@ -139,6 +146,9 @@ while game_loop == True:
         wave_controller_mod.current_wave.restart_waves()
         life_mod.life = life_mod.max_life
         wave_controller_mod.change_last_number()
+
+    if wave_controller_mod.is_over == True:
+        print("VICTORY")
 
     pygame.display.flip()
     pygame.time.Clock().tick(60)

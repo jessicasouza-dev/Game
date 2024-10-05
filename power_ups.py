@@ -17,6 +17,8 @@ display_text_1 = ''
 display_text_2 = ''
 
 plus_sprite = pygame.image.load('assets/power_up_sprites/+.jpg')
+
+
 def powerup_damageup():
     # +20% damage, additively
     # size up slightly
@@ -26,10 +28,12 @@ def powerup_damageup():
         shots_mod.size_value *= 1.1
     shots_mod.speed_value *= 0.9
 
+
 def powerup_firerateup():
     # -25% shot cooldown, multiplicative
     shots_mod.cooldown_value *= 0.75
     round(shots_mod.cooldown_value)
+
 
 def powerup_multishot():
     # +1 or +33% projectiles per shot, at the cost of -33% damage, multiplicative
@@ -42,20 +46,24 @@ def powerup_multishot():
     shots_mod.damage_modifier *= 0.67
     shots_mod.inaccuracy_value += 1
 
+
 def powerup_pierceup():
     # increases how many times each shot can go through an enemy/floor without beind destroyed
     shots_mod.pierce_value += 1
+
 
 def powerup_move_speed():
     # +25% player sideways movement speed, additively
     player_mod.player_move_speed += player_mod.PLAYER_BASE_SPEED * 1.25
     round(player_mod.player_move_speed)
 
+
 def powerup_climb_speed():
     # -20% up/down between floors movement cooldown, additively, down to a minimum of 5 frames
     player_mod.player_updown_cd -= player_mod.BASE_UPDOWN_CD * 0.2
     if player_mod.player_updown_cd < 5:
         player_mod.player_updown_cd = 5
+
 
 def powerup_instaheal():
     #heal 30% of maximum health, rounded up
@@ -64,14 +72,17 @@ def powerup_instaheal():
     if life_mod.life > life_mod.max_life:
         life_mod.life = life_mod.max_life
 
+
 def powerup_full_heal():
     #heal back to maximum health
     life_mod.life = life_mod.max_life
+
 
 def powerup_health_boost():
     #increase maximum health by 25, also heals by 25
     life_mod.max_life += 25
     life_mod.life += 25
+
 
 offense_powerups = [powerup_damageup, powerup_firerateup, powerup_pierceup, powerup_multishot]
 support_powerups = [powerup_move_speed, powerup_climb_speed, powerup_instaheal, powerup_full_heal, powerup_health_boost]
@@ -81,6 +92,7 @@ pwrup_bundle_2 = []
 pwrup_bundle_3 = []
 
 bundle_list = [pwrup_bundle_1, pwrup_bundle_2, pwrup_bundle_3]
+
 
 class powerup:
     def __init__(self, pwrup_func, rect):
@@ -95,22 +107,22 @@ class powerup:
             self.text = "Shoot 25% faster!"
         elif self.effect == powerup_pierceup:
             self.sprite = pygame.image.load('assets/power_up_sprites/pierce_up_placeholder.png')
-            self.text = "Shots can cross 1 additional\nfloor or enemy without\n being destroyed!"
+            self.text = "Shots pass through one floor!"
         elif self.effect == powerup_multishot:
             self.sprite = pygame.image.load('assets/power_up_sprites/multishot_placeholder.jpg')
-            self.text = "Fire more bullets per shot at the cost of reduced damage!\nstill increases total DPS."
+            self.text = "More bullets per shot"
         elif self.effect == powerup_move_speed:
             self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_leftright_placeholder.jpg')
-            self.text = "Movement speed increased by 25%!"
+            self.text = "Speed +25%!"
         elif self.effect == powerup_climb_speed:
             self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_updown_placeholder.jpg')
-            self.text = "Up/down climbing speed increased by 20%!\nDoes nothing if you already collected this\nupgrade 5 times."
+            self.text = "Climbing speed +20%!"
         elif self.effect == powerup_instaheal:
             self.sprite = pygame.image.load('assets/power_up_sprites/small_heal_placeholder.jpg')
-            self.text = "Recover 30% of your maximum health!"
+            self.text = "Recover 30% of health!"
         elif self.effect == powerup_full_heal:
             self.sprite = pygame.image.load('assets/power_up_sprites/full_heal_placeholder.jpg')
-            self.text = "Recover all of your health!"
+            self.text = "Recover 100% of health!"
         elif self.effect == powerup_health_boost:
             self.sprite = pygame.image.load('assets/power_up_sprites/max_health_up_placeholder.jpg')
             self.text = "Increase maximum health by 25!"
@@ -119,6 +131,7 @@ class powerup:
 
     def render(self):
         screen.blit(self.sprite, self.rect)
+
 
 # shuffle available upgrades before showcasing them to the player
 def randomize_bundles():
@@ -129,9 +142,12 @@ def randomize_bundles():
     global pwrups_shuffled
 
     bundle_list = []
-    support_copy = support_powerups
-    offense_copy = offense_powerups
-    for bundle in range(3):
+    support_copy = support_powerups.copy()
+    offense_copy = offense_powerups.copy()
+    print(offense_copy)
+
+
+    for bundle in range(2):
         bundle = []
 
         support = random.choice(support_copy)
@@ -144,7 +160,9 @@ def randomize_bundles():
         bundle.append(support)
 
         bundle_list.append(bundle)
-    
+
+        print(offense_copy)
+
     pwrups_shuffled = True
 
 
@@ -164,8 +182,8 @@ def do_selection(is_selecting):
         rect_2.bottom = ground_y
         rect_2.centerx = (floor_mod.floor_size_x / 2) + 100
 
-        pwrup_1 = powerup(bundle_list[n-2][0], rect_1)
-        pwrup_2 = powerup(bundle_list[n-2][1], rect_2)
+        pwrup_1 = powerup(bundle_list[n - 2][0], rect_1)
+        pwrup_2 = powerup(bundle_list[n - 2][1], rect_2)
 
         pwrup_1.render()
         pwrup_2.render()
@@ -182,15 +200,12 @@ def do_selection(is_selecting):
         for x in rect_list:
             if player_mod.player_pos.colliderect(x):
                 is_touching_list = True
-                print(f'debug: player is touching {local_pwrup_bundle}')
                 display_text_1 = pwrup_1.text
                 display_text_2 = pwrup_2.text
 
         # check if player is trying to pick up upgrade
         if is_selecting == True and pwrups_picked == False:
-            print('debug: attempting to pick upgrade')
             if is_touching_list:
-                print('debug: upgrade obtained')
                 for effect in local_pwrup_bundle:
                     effect()
                     print(effect)

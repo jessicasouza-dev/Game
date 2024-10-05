@@ -18,6 +18,8 @@ current_wave = wave_mod.Wave(wave_config)
 delay = 5000
 last_time = 0
 
+is_over = False
+
 current_time = pygame.time.get_ticks()
 
 is_power_picked = False
@@ -26,8 +28,10 @@ def control_waves(waves):
     global last_number
     global current_wave
     global delay
+    global is_power_picked
     global last_time
     global wave_config
+    global is_over
     global pwrup_selection
 
     time = pygame.time.get_ticks()
@@ -37,26 +41,25 @@ def control_waves(waves):
         current_wave = waves[last_number]
 
         if current_wave.isActive == True:
-            print(f"debug wave: IS ACTIVE power picked is {is_power_picked}")
             current_wave.update()
+            is_power_picked = False
+            pwrup_mod.pwrups_shuffled = False
         else:
-            if last_number + 1 <= len(waves) - 1:
+            if last_number + 1 <= len(waves):
 
                 if is_power_picked == False:
-                    print(f"debug if: power picked is {is_power_picked}")
                     if pwrup_mod.pwrups_shuffled == False:
                         pwrup_mod.randomize_bundles()
                     pwrup_mod.pwrups_picked = False
 
                 else:
-                    print(f"debug else: power picked is {is_power_picked}")
                     last_number += 1
                     current_wave = waves[last_number]
                     last_time = time
 
 
         if last_number == len(waves) - 1 and current_wave.isActive == False:
-            print("waves acabaram")
+            is_over = True
 
 def change_last_number():
     global last_number

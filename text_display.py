@@ -8,31 +8,33 @@ import screen as screen_mod
 screen = screen_mod.screen
 textbox_color = (64, 0, 20)
 
-powerup_textbox_firsthalf = pygame.Rect(0, 0, 0, 0)
-powerup_textbox_secondhalf = pygame.Rect(0, 0, 0, 0)
+COLOR_WHITE = (255, 255, 255)
+COLOR_BLACK = (0, 0, 0)
 
-# display textboxes with information about power-ups the player is selecting
+
 def display_powerup_info():
-
-    # text to be displayed in the textboxes
     text_1 = pwrup_mod.display_text_1
     text_2 = pwrup_mod.display_text_2
 
-    # relocating position of the textboxes
-    powerup_textbox_firsthalf.width = floor_mod.floor_size_x / 3
-    powerup_textbox_secondhalf.width = floor_mod.floor_size_x / 3
-    powerup_textbox_firsthalf.height = floor_mod.floor_size_y * (3/4)
-    powerup_textbox_secondhalf.height = floor_mod.floor_size_y * (3/4)
-    powerup_textbox_firsthalf.right = floor_mod.floor_size_x / 2 - 10
-    powerup_textbox_secondhalf.left = floor_mod.floor_size_x / 2 + 10
-    if player_mod.player_pos.centery < floor_mod.floors_bottom_y_list[3]:
-        powerup_textbox_firsthalf.bottom = floor_mod.floors_bottom_y_list[4]
-        powerup_textbox_secondhalf.bottom = floor_mod.floors_bottom_y_list[4]
-    else:
-        powerup_textbox_firsthalf.bottom = floor_mod.floors_bottom_y_list[0]
-        powerup_textbox_secondhalf.bottom = floor_mod.floors_bottom_y_list[0]
-    
-    pygame.draw.rect(screen, textbox_color, powerup_textbox_firsthalf)
-    pygame.draw.rect(screen, textbox_color, powerup_textbox_secondhalf)
+    power_font = pygame.font.Font('PressStart2P.ttf', 16)
 
-    print(text_1 + text_2)
+    power_text_1 = power_font.render(text_1, True, COLOR_WHITE, COLOR_BLACK)
+    power_text_rect_1 = power_text_1.get_rect()
+    power_text_rect_1.center = (floor_mod.floor_size_x / 2, floor_mod.floors_bottom_y_list[4])
+
+
+    power_text_2 = power_font.render(text_2, True, COLOR_WHITE, COLOR_BLACK)
+    power_text_rect_2 = power_text_2.get_rect()
+    power_text_rect_2.center = (
+    floor_mod.floor_size_x / 2, power_text_rect_1.bottom + 20)
+
+
+    if player_mod.player_pos.centery < floor_mod.floors_bottom_y_list[3]:
+        power_text_rect_1.top = floor_mod.floors_bottom_y_list[3] + floor_mod.gap_size + 20
+        power_text_rect_2.top = power_text_rect_1.bottom + 20
+    else:
+        power_text_rect_1.bottom = floor_mod.floors_bottom_y_list[0] - floor_mod.gap_size - 20
+        power_text_rect_2.bottom = power_text_rect_1.bottom + 20
+
+    screen.blit(power_text_1, power_text_rect_1)
+    screen.blit(power_text_2, power_text_rect_2)
