@@ -7,7 +7,7 @@ import player_behavior as player_mod
 import player_shots as player_shots_mod
 import os
 import enemy as enemy_mod
-import wave as wave_mod
+import waves as wave_mod
 import life as life_mod
 
 wave_config = {}
@@ -44,3 +44,7 @@ def control_waves(waves):
 
         if last_number == len(waves) - 1 and current_wave.isActive == False:
             print("wave acabou")
+
+def change_last_number():
+    global last_number
+    last_number = 0
