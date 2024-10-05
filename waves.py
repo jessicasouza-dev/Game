@@ -6,6 +6,7 @@ import floors as floor_mod
 import player_behavior as player_mod
 import random as random
 import life as life_mod
+import wave_controller as controller
 
 
 

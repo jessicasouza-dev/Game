@@ -14,7 +14,7 @@ import enemy as enemy_mod
 import life as life_mod
 import wave_controller as wave_controller_mod
 import power_ups as power_up_mod
-import wave as wave_mod
+import waves as wave_mod
 
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
@@ -148,7 +148,10 @@ while game_loop == True:
         
     if life_mod.life == 0:
         wave1.restart_waves()
+        for wave in waves:
+            wave.restart_waves()
         life_mod.life = life_mod.max_life
+        wave_controller_mod.change_last_number()
 
     pygame.display.flip()
     pygame.time.Clock().tick(60)
