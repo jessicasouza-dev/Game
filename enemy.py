@@ -21,7 +21,7 @@ delay = 100
 
 
 class Enemy:
-    def __init__(self, x, y, color, speed, surface, direction, player, current_layer):
+    def __init__(self, x, y, speed, surface, direction, player, current_layer):
         super().__init__()
 
         self.x = x
@@ -30,7 +30,7 @@ class Enemy:
         self.width = ENEMY_WIDTH
         self.height = ENEMY_HEIGHT
         self.player = player
-        self.color = color
+        self.color = (0, 0, 128)
         self.speed = speed
         self.surface = surface
         self.rect = pygame.Rect(x, y, self.width, self.height)
@@ -76,13 +76,14 @@ class Enemy:
 
 
 class Shooter(Enemy):
-    def __init__(self, x, y, color, speed, surface, direction, player, current_layer):
-        super().__init__(x, y, color, speed, surface, direction, player, current_layer)
+    def __init__(self, x, y, speed, surface, direction, player, current_layer):
+        super().__init__(x, y, speed, surface, direction, player, current_layer)
         self.is_shooting = False
 
     def act(self):
         self.drawEnemy()
         self.wander()
+        self.color = (230, 230, 250)
         self.enemy_hit_player(self.player)
         self.see_player()
 
@@ -106,10 +107,11 @@ class Shooter(Enemy):
 
 
 class Sniper(Enemy):
-    def __init__(self, x, y, color, speed, surface, direction, player, current_layer):
-        super().__init__(x, y, color, speed, surface, direction, player, current_layer)
+    def __init__(self, x, y, speed, surface, direction, player, current_layer):
+        super().__init__(x, y, speed, surface, direction, player, current_layer)
         self.is_shooting = False
         self.delay = 500
+        self.color = (255, 0, 0)
         self.last_time = 0
         self.last_time_walk = 0
         self.already_shot = False

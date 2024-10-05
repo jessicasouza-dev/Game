@@ -15,6 +15,7 @@ import life as life_mod
 import wave_controller as wave_controller_mod
 import power_ups as power_up_mod
 import waves as wave_mod
+import wave_controller as wave_controller_mod
 
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
@@ -27,6 +28,7 @@ pygame.init()
 
 floor_mod.create_floors()
 player_mod.player_spawn()
+
 
 # instant power ups for the purposes of testing
 power_up_mod.powerup_pierceup()
@@ -65,12 +67,13 @@ shoot_direction = 'right'
 # main loop
 game_loop = True
 
-enemy = enemy_mod.Sniper(0, floor_mod.floors_bottom_y_list[1], enemy_mod.enemy_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
-enemy2 = enemy_mod.Enemy(0, floor_mod.floors_bottom_y_list[1], player_mod.player_color_temporary, 5, screen, "right", player_mod.player_pos, 2)
-wave1 = wave_mod.Wave(8, enemy, 2, "Enemy")
-wave2 = wave_mod.Wave(3, enemy2, 2, "Shooter")
-wave3 = wave_mod.Wave(5, enemy2, 2, "Sniper")
-waves = [wave1, wave2, wave3]
+wave_config2 = {
+    'Shooter': 1,
+    'Enemy': 0,
+    'Sniper': 0
+}
+wave1 = wave_mod.Wave(wave_config2)
+waves = [wave1]
 
 while game_loop == True:
 
@@ -147,9 +150,7 @@ while game_loop == True:
 
         
     if life_mod.life == 0:
-        wave1.restart_waves()
-        for wave in waves:
-            wave.restart_waves()
+        wave_controller_mod.current_wave.restart_waves()
         life_mod.life = life_mod.max_life
         wave_controller_mod.change_last_number()
 
