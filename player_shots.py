@@ -8,8 +8,8 @@ screen = screen_mod.screen
 
 # load sprites
 
-sprite_1 = pygame.image.load('assets\player_sprites\slimeshot-1.png.png')
-sprite_2 = pygame.image.load('assets\player_sprites\slimeshot-2.png.png')
+sprite_1 = pygame.image.load('assets/player_sprites/slimeshot-1.png.png')
+sprite_2 = pygame.image.load('assets/player_sprites/slimeshot-2.png.png')
 sprite_1.set_alpha(164)
 sprite_2.set_alpha(164)
 sprites = [sprite_1, sprite_2]

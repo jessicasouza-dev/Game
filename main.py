@@ -40,8 +40,8 @@ sound_player_shot.set_volume(0)
 sound_victory = pygame.mixer.Sound('assets/achievement-video-game-type-1-230515.mp3')
 
 # victory text
-victory_font = pygame.font.Font('PressStart2P.ttf', 20)
-victory_text = victory_font.render('VICTORY!!!', True, COLOR_WHITE, COLOR_BLACK)
+victory_font = pygame.font.Font('assets/fonts/Danger_Diabolik.ttf', 100)
+victory_text = victory_font.render('VICTORY;', True, COLOR_BLUEISH_GREEN, COLOR_BLACK)
 victory_text_rect = victory_text.get_rect()
 victory_text_rect.center = (scrn_mod.screen.get_width() / 2, scrn_mod.screen.get_height() / 2)
 
