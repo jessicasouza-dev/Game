@@ -59,6 +59,7 @@ class Shot:
     def destroy(self):
         if self in active_projectiles:
             active_projectiles.remove(self)
+            
 
     def hurt(self):
         if self.rect.colliderect(player_mod.player_pos):

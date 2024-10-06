@@ -6,10 +6,15 @@ shots_temporary_color = (255, 100, 0)
 
 screen = screen_mod.screen
 
-# load sprites
+# splat sound effect
+pygame.mixer.init()
+splat = pygame.mixer.Sound('assets/cartoon-splat-6086.mp3')
+ptoo = pygame.mixer.Sound('assets/hollow_knight_aspid_spit.wav')
+splat.set_volume(0.7)
 
-sprite_1 = pygame.image.load('assets\player_sprites\slimeshot-1.png.png')
-sprite_2 = pygame.image.load('assets\player_sprites\slimeshot-2.png.png')
+# load sprites
+sprite_1 = pygame.image.load('assets/player_sprites/slimeshot-1.png.png')
+sprite_2 = pygame.image.load('assets/player_sprites/slimeshot-2.png.png')
 sprite_1.set_alpha(164)
 sprite_2.set_alpha(164)
 sprites = [sprite_1, sprite_2]
@@ -49,7 +54,9 @@ class player_projectile:
     rect = None
 
     def __init__(self, x_spawning_position, y_spawning_position, movement_direction):
-        print('debug: attempting to shoot')
+        #print('debug: attempting to shoot')
+
+        ptoo.play()
 
         self.speed = speed_value
         self.damage = damage_value * damage_modifier
@@ -80,6 +87,7 @@ class player_projectile:
         self.floors_pierced = [self.original_layer]
 
     def render(self):
+        self.sprite = pygame.transform.scale(self.sprite, (self.size, self.size))
         screen.blit(self.sprite, self.rect)
     
     def move(self):
@@ -98,8 +106,6 @@ class player_projectile:
             self.sprite = pygame.transform.rotate(self.sprite, 270)
         self.rect.centerx += self.inaccuracy_x
         self.rect.centery += self.inaccuracy_y
-
-        self.sprite = pygame.transform.scale(self.sprite, (self.size, self.size))
 
         self.sprite_index = (self.sprite_index + 1) % 2
 
@@ -186,12 +192,17 @@ class explosion:
         active_explosions.append(self)
 
     def run_animation(self):
+        if self.innertimer == 0:
+            splat.play()
         if self.innertimer <= 4:
             self.sprite = self.sprite_1
+            self.sprite.set_alpha(164)
         elif self.innertimer <= 8:
             self.sprite = self.sprite_2
+            self.sprite.set_alpha(124)
         elif self.innertimer <= 16:
             self.sprite = self.sprite_3
+            self.sprite.set_alpha(84)
         
         self.sprite = pygame.transform.scale(self.sprite, (50, 50))
         screen.blit(self.sprite, self.rect)

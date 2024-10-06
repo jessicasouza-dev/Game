@@ -21,9 +21,8 @@ delay = 100
 
 pygame.mixer.init()
 sound_enemy = pygame.mixer.Sound('assets/synth-shot-fx-by-alien-i-trust-9-245434.mp3')
-sound_enemy_hit = pygame.mixer.Sound('assets/cartoon-splat-6086.mp3')
 sound_enemy_dead = pygame.mixer.Sound('assets/goblin-death-clash-of-clans.mp3')
-sound_enemy_dead.set_volume(0.4)
+sound_enemy_dead.set_volume(0.25)
 
 
 
@@ -99,7 +98,6 @@ class Enemy:
 
     def get_hit(self, damage):
         self.life = self.life - damage
-        sound_enemy_hit.play()
 
 
 class Shooter(Enemy):

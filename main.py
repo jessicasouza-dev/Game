@@ -50,6 +50,13 @@ floor_mod.create_floors()
 player_mod.player_spawn()
 power_up_mod.randomize_bundles()
 
+
+# background
+background = pygame.image.load('assets/background.png')
+background = pygame.transform.scale(background, (720, 720))
+floor_tiles = pygame.image.load('assets/floor_tiles.png')
+floor_tiles = pygame.transform.scale(floor_tiles, (720, 25))
+
 DELAY = 5000
 
 game_loop = True
@@ -171,8 +178,10 @@ def game():
 
         time = pygame.time.get_ticks()
 
-        screen.fill(temporary_screen_color)
-        floor_mod.render_floors()
+        screen.blit(background, (0, 0))
+        for y in floor_mod.floors_bottom_y_list:
+            screen.blit(floor_tiles.copy(), (0, y))
+
         spacebar = False
 
         for event in pygame.event.get():
