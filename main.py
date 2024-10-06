@@ -9,6 +9,7 @@ import floors as floor_mod
 import player_behavior as player_mod
 import player_shots as player_shots_mod
 import os
+import random
 import shot as shot_mod
 import enemy as enemy_mod
 import life as life_mod
@@ -55,26 +56,61 @@ game_loop = True
 
 wave_config1 = {
     'Shooter': 0,
-    'Enemy': 10,
+    'Enemy': random.randint(8, 12),
     'Sniper': 0
 }
 
 wave_config2 = {
-    'Shooter': 5,
-    'Enemy': 10,
+    'Shooter': random.randint(4, 6),
+    'Enemy': random.randint(8, 10),
     'Sniper': 0
 }
 
 wave_config3 = {
     'Shooter': 0,
-    'Enemy': 10,
-    'Sniper': 5
+    'Enemy': random.randint(8, 10),
+    'Sniper': random.randint(4, 6)
+}
+
+wave_config4 = {
+    'Shooter': 2,
+    'Enemy': random.randint(6, 8),
+    'Sniper': 2
+}
+
+wave_config5 = {
+    'Shooter': random.randint(3, 5),
+    'Enemy': random.randint(15, 20),
+    'Sniper': 0
+}
+
+wave_config6 = {
+    'Shooter': random.randint(8, 15),
+    'Enemy': 15,
+    'Sniper': 0
+}
+
+wave_config7 = {
+    'Shooter': 0,
+    'Enemy': 15,
+    'Sniper': random.randint(8, 15)
+}
+
+wave_config8 = {
+    'Shooter': random.randint(10, 30),
+    'Enemy': random.randint(25, 50),
+    'Sniper': random.randint(10, 30)
 }
 
 wave1 = wave_mod.Wave(wave_config1)
 wave2 = wave_mod.Wave(wave_config2)
 wave3 = wave_mod.Wave(wave_config3)
-waves = [wave1, wave2, wave3]
+wave4 = wave_mod.Wave(wave_config4)
+wave5 = wave_mod.Wave(wave_config5)
+wave6 = wave_mod.Wave(wave_config6)
+wave7 = wave_mod.Wave(wave_config7)
+wave8 = wave_mod.Wave(wave_config8)
+waves = [wave1, wave2, wave3, wave4, wave5, wave6, wave7, wave8]
 
 shoot_direction = 'right'
 sound_victory_played = False

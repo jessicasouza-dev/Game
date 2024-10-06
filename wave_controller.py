@@ -38,6 +38,11 @@ def control_waves(waves):
     time = pygame.time.get_ticks()
     wave_config = waves[last_number].enemies_dictionary
 
+    if last_number >= 3:
+        wave_mod.health_multiplier = pow(1.40, last_number - 2)
+    else:
+        wave_mod.health_multiplier = 1
+
     if last_number < len(waves):
         current_wave = waves[last_number]
 

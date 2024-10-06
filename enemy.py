@@ -41,7 +41,7 @@ class Enemy:
         self.color = (0, 0, 128)
         self.speed = speed
         self.usual_speed = speed
-        self.damage = 5
+        self.damage = 20
         self.surface = surface
         self.rect = pygame.Rect(x, y, self.width, self.height)
         self.current_layer = current_layer
@@ -52,6 +52,7 @@ class Enemy:
         self.sprite_index = 0
         self.sprite = self.spritesheet[self.sprite_index]
         self.sprite_change_timer = 6
+        self.shots_hit = []
 
     def act(self):
         self.drawEnemy()

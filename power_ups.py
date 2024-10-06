@@ -43,7 +43,8 @@ def powerup_multishot():
     else:
         shots_mod.multishot_value += 1
 
-    shots_mod.size_value *= 0.90
+    shots_mod.damage_modifier *= 0.67
+    shots_mod.size_value *= 0.87
     shots_mod.inaccuracy_value += 1
 
 
@@ -59,10 +60,10 @@ def powerup_move_speed():
 
 
 def powerup_climb_speed():
-    # -33% up/down between floors movement cooldown, additively, down to a minimum of 5 frames
-    player_mod.player_updown_cd -= player_mod.BASE_UPDOWN_CD * 0.33
+    # -33% up/down between floors movement cooldown, multiplicatively, down to a minimum of 3 frames
+    player_mod.player_updown_cd *= 0.67
     if player_mod.player_updown_cd < 5:
-        player_mod.player_updown_cd = 5
+        player_mod.player_updown_cd = 3
 
 
 def powerup_instaheal():
