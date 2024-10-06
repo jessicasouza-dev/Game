@@ -9,7 +9,7 @@ player_color_temporary = (0, 252, 0)
 current_layer = 2
 
 pygame.mixer.init()
-sound_floors = pygame.mixer.Sound("assets\mixkit-player-jumping-in-a-video-game-2043.wav")
+sound_floors = pygame.mixer.Sound("assets/mixkit-player-jumping-in-a-video-game-2043.wav")
 
 # player sizes
 PLAYER_WIDTH = 32
@@ -110,10 +110,10 @@ def try_shooting(is_shooting, direction):
         #print(f'debug: frames until shot cooldown is over: {shooting_cooldown}')
         
   
-def player_gets_hit():
+def player_gets_hit(damage):
     global invincible, invincible_time
     if invincible ==  False:
-        life_mod.lose_life()
+        life_mod.lose_life(damage)
         invincible = True
         invincible_time = pygame.time.get_ticks()
                 

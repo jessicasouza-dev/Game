@@ -42,7 +42,6 @@ def control_waves(waves):
         current_wave = waves[last_number]
 
         if current_wave.isActive == True:
-            print("is active")
             current_wave.update()
             is_power_picked = False
             pwrup_mod.pwrups_shuffled = False

@@ -20,9 +20,7 @@ sniper_cooldown = 0
 delay = 100
 
 pygame.mixer.init()
-sound_enemy = pygame.mixer.Sound('assets\synth-shot-fx-by-alien-i-trust-9-245434.mp3')
-
-time = 60
+sound_enemy = pygame.mixer.Sound('assets/synth-shot-fx-by-alien-i-trust-9-245434.mp3')
 
 
 class Enemy:
@@ -37,17 +35,18 @@ class Enemy:
         self.player = player
         self.color = (0, 0, 128)
         self.speed = speed
+        self.damage = 5
         self.surface = surface
         self.rect = pygame.Rect(x, y, self.width, self.height)
         self.current_layer = current_layer
         self.rect.centerx = x
         self.rect.centery = y
+        self.life = 100
 
     def act(self):
         self.drawEnemy()
         self.wander()
         self.enemy_hit_player(self.player)
-        self.see_player()
 
     def drawEnemy(self):
         pygame.draw.rect(self.surface, self.color, self.rect, width=0)
@@ -70,14 +69,13 @@ class Enemy:
 
     def enemy_hit_player(self, player):
         if self.rect.colliderect(player) == True:
-            player_mod.player_gets_hit()
+            player_mod.player_gets_hit(self.damage)
 
     def die(self):
         self.rect = pygame.Rect(0, 0, 0, 0)
 
-    def see_player(self):
-        if self.current_layer == player_mod.current_layer and self.direction != player_mod.current_direction:
-            print()
+    def get_hit(self, damage):
+        self.life = self.life - damage
 
 
 class Shooter(Enemy):
@@ -88,6 +86,9 @@ class Shooter(Enemy):
         self.last_time = 0
         self.already_shot = False
         self.switch = False
+        self.life = 200
+        self.time = 90
+        self.saw_player = False
 
     def act(self):
         self.drawEnemy()
@@ -97,30 +98,32 @@ class Shooter(Enemy):
         self.see_player()
 
     def see_player(self):
-        global time
-
-        distance = abs(self.x - player_mod.player_pos.x)
 
         if self.current_layer == player_mod.current_layer:
             if (self.direction == "right" and player_mod.player_pos.centerx >= self.x) or (
                     self.direction == "left" and player_mod.player_pos.centerx <= self.x):
 
-                if time > 0:
+                if self.time > 0 and self.saw_player == False:
                     self.speed = 0
-                    print(f"debug time: {time}")
-                    time -= 1
-                elif time == 0:
-                    print(f"debug can shot: {time}")
-                    self.speed = 5
+                    self.time -= 1
+
+                if self.time == 0:
                     self.shoot()
-        else:
-            if time != 60 and time > 0:
-                time -= 1
+
+
+        if self.time < 90 and self.time != 0:
+            self.time -= 1
+
+        if self.time < 0:
+            self.time = 0
+
+        if self.time == 0:
+            self.speed = 5
+            self.saw_player = True
 
     def shoot(self):
         global cooldown
         if cooldown == 0:
-            print('debug: enemy ready to shoot')
             y = self.rect.centery
             x = self.rect.centerx
             sound_enemy.play()
@@ -140,7 +143,7 @@ class Sniper(Enemy):
         self.last_time = 0
         self.last_time_walk = 0
         self.already_shot = False
-
+        self.life = 300
         self.wandering = True
         self.shooting_at_player = False
         self.found_player = False
@@ -160,12 +163,10 @@ class Sniper(Enemy):
             self.shooting_at_player = True
             self.wandering = False
             self.found_player = True
-            print(f"debug: achou player ? {self.found_player}")
 
         if distance > 50 and self.current_layer != player_mod.current_layer and self.found_player == True:
             self.already_shot = False
             self.found_player = False
-            print(f"debug: deixou o player em paz ? {self.found_player}")
 
         if self.already_shot:
             if current_time - self.last_time >= self.delay:
@@ -178,7 +179,6 @@ class Sniper(Enemy):
             if current_time - self.last_time_walk >= self.delay:
                 self.shoot()
                 sound_enemy.play()
-                print(f"debug: atirou")
                 self.already_shot = True
                 self.last_time_walk = current_time
 
@@ -198,7 +198,6 @@ class Sniper(Enemy):
         current_time = pygame.time.get_ticks()
 
         if sniper_cooldown == 0:
-            print('debug: enemy ready to shoot')
             y = self.rect.centery
             x = self.rect.centerx
             shot_mod.active_projectiles.append(shot_mod.VerticalShot(x, y, 15,

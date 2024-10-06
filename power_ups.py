@@ -17,6 +17,7 @@ display_text_1 = ''
 display_text_2 = ''
 
 plus_sprite = pygame.image.load('assets/power_up_sprites/+.jpg')
+sound_choose_power_up = pygame.mixer.Sound('assets/classic-game-action-positive-30-224562.mp3')
 
 
 def powerup_damageup():
@@ -144,7 +145,6 @@ def randomize_bundles():
     bundle_list = []
     support_copy = support_powerups.copy()
     offense_copy = offense_powerups.copy()
-    print(offense_copy)
 
 
     for bundle in range(3):
@@ -160,8 +160,6 @@ def randomize_bundles():
         bundle.append(support)
 
         bundle_list.append(bundle)
-
-        print(offense_copy)
 
     pwrups_shuffled = True
 
@@ -210,5 +208,6 @@ def do_selection(is_selecting):
                     effect()
                     print(effect)
                 pwrups_picked = True
+                sound_choose_power_up.play()
                 #commands to continue next wave here
                 wave_controller_mod.is_power_picked = True

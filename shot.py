@@ -10,8 +10,7 @@ active_projectiles = []
 screen = screen_mod.screen
 
 pygame.mixer.init()
-sound_enemy = pygame.mixer.Sound('assets\synth-shot-fx-by-alien-i-trust-9-245434.mp3')
-
+sound_enemy = pygame.mixer.Sound('assets/synth-shot-fx-by-alien-i-trust-9-245434.mp3')
 
 class Shot:
     def __init__(self, x, y, speed, surface, direction, enemy):
@@ -25,6 +24,7 @@ class Shot:
         self.enemy = enemy
         self.color = (255, 255, 255)
         self.rect = pygame.Rect(x, y, 10, 10)
+        self.damage = 5
 
     def update(self):
         self.render()
@@ -49,7 +49,7 @@ class Shot:
 
     def hurt(self):
         if self.rect.colliderect(player_mod.player_pos):
-            life_mod.lose_life()
+            life_mod.lose_life(self.damage)
             self.destroy()
 
 
@@ -57,6 +57,7 @@ class VerticalShot(Shot):
     def __init__(self, x, y, speed, surface, direction, enemy, player):
         super().__init__(x, y, speed, surface, direction, enemy)
         self.player = player
+        self.damage = 15
 
     def move(self):
         if self.player.current_layer >= self.enemy.current_layer:

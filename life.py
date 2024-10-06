@@ -8,6 +8,9 @@ import floors as floor_mod
 life = 100
 max_life = 100
 
+pygame.mixer.init()
+sound_player_hurt = pygame.mixer.Sound('assets/classic-game-action-negative-9-224413.mp3')
+
 def show_life():
     global life, max_life
     bar_width = 200
@@ -23,15 +26,16 @@ def show_life():
     pygame.draw.rect(scrn_mod.screen, background_color, (bar_x, bar_y, bar_width, bar_height))
     pygame.draw.rect(scrn_mod.screen, life_color, (bar_x, bar_y, current_bar_width, bar_height))
 
-    life_font = pygame.font.Font(None, 30)
+    life_font = pygame.font.Font("assets/fonts/Woodstamp.otf", 30)
     life_text = life_font.render(f"Life: {life}", True, scrn_mod.COLOR_WHITE, scrn_mod.COLOR_BLACK)
-    scrn_mod.screen.blit(life_text, (bar_x + 60, bar_y - 20))
+    scrn_mod.screen.blit(life_text, (bar_x - 80, bar_y))
     
     
     
-def lose_life():
+def lose_life(damage):
     global life
-    life -= 20
+    life -= damage
+    sound_player_hurt.play()
     if life == 0 or life < 0:
         life = 0
         

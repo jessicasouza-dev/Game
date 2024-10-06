@@ -21,6 +21,9 @@ import button as button_mod
 
 COLOR_WHITE = (255, 255, 255)
 COLOR_BLACK = (0, 0, 0)
+COLOR_GOLD = (255, 215, 0)
+COLOR_DARK_BLUE = (7, 22, 46)
+COLOR_BLUEISH_GREEN = (11, 128, 68)
 
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
@@ -32,13 +35,14 @@ player_move_left = player_move_right = player_move_up = player_move_down = playe
 pygame.init()
 
 pygame.mixer.init()
-sound_player_shot =  pygame.mixer.Sound('assets\laser-shot-ingame-230500.mp3')
+sound_player_shot = pygame.mixer.Sound('assets/laser-shot-ingame-230500.mp3')
+sound_victory = pygame.mixer.Sound('assets/achievement-video-game-type-1-230515.mp3')
 
 # victory text
 victory_font = pygame.font.Font('PressStart2P.ttf', 20)
-victory_text = victory_font .render('VICTORY!!!', True, COLOR_WHITE, COLOR_BLACK)
+victory_text = victory_font.render('VICTORY!!!', True, COLOR_WHITE, COLOR_BLACK)
 victory_text_rect = victory_text.get_rect()
-victory_text_rect.center = (scrn_mod.screen.get_width()/2, scrn_mod.screen.get_height()/2)
+victory_text_rect.center = (scrn_mod.screen.get_width() / 2, scrn_mod.screen.get_height() / 2)
 
 floor_mod.create_floors()
 player_mod.player_spawn()
@@ -49,74 +53,82 @@ DELAY = 5000
 game_loop = True
 
 wave_config1 = {
-    'Shooter': 10,
-    'Enemy': 15,
-    'Sniper': 5
+    'Shooter': 0,
+    'Enemy': 20,
+    'Sniper': 0
 }
 
 wave_config2 = {
-    'Shooter': 15,
-    'Enemy': 20,
-    'Sniper': 10
+    'Shooter': 20,
+    'Enemy': 30,
+    'Sniper': 0
 }
 
 wave_config3 = {
-    'Shooter': 20,
-    'Enemy': 25,
-    'Sniper': 15
+    'Shooter': 30,
+    'Enemy': 40,
+    'Sniper': 20
 }
 
 wave1 = wave_mod.Wave(wave_config1)
 wave2 = wave_mod.Wave(wave_config2)
-wave3 = wave_mod.Wave(wave_config2)
-waves = [wave1]
-
+wave3 = wave_mod.Wave(wave_config3)
+waves = [wave1, wave2, wave3]
 
 shoot_direction = 'right'
+sound_victory_played = False
 
-BG = pygame.image.load("assets/background.jpg")
+BG = pygame.image.load("assets/bg2.png")
 BG = pygame.transform.scale(BG, (720, 720))
 image = pygame.image.load("assets/button background.png")
 image = pygame.transform.scale(image, (300, 100))
 
-def get_font(size):
-    return pygame.font.Font("assets\Love Roti.ttf",80)
+
+def get_font_title(size):
+    return pygame.font.Font("assets/fonts/Danger_Diabolik.ttf", size)
+
+def get_font_button(size):
+    return pygame.font.Font("assets/fonts/windows_command_prompt.ttf", size)
+
+
 
 def main_menu():
-    pygame.display.set_caption("Menu")
-    screen.blit(BG, (0,0))
+    pygame.display.set_caption("Monster Mania")
+    screen.blit(BG, (0, 0))
 
-    
     while True:
         menu_mouse_pos = pygame.mouse.get_pos()
-    
-        
-        menu_text = get_font(100).render("Main Menu", True, scrn_mod.COLOR_BLACK)
-        menu_rect = menu_text.get_rect(center = (350,200))
-        
-        play_button = button_mod.Button(image, pos = (350,350), 
-                                        text_input = "PLAY", font = get_font(75), base_color = scrn_mod.COLOR_WHITE,
-                                        hovering_color = scrn_mod.COLOR_WHITE)
-        
-        screen.blit(menu_text, menu_rect)
-        play_button.update(screen)
-        
+
+        monster_text = get_font_title(60).render("M o n s t e r", True, COLOR_BLUEISH_GREEN)
+        monster_rect = monster_text.get_rect(center=(screen.get_width()/2, screen.get_height()/2 - 100))
+
+        mania_text = get_font_title(60).render("M a n i a", True, COLOR_BLUEISH_GREEN)
+        mania_rect = monster_text.get_rect(center=(monster_rect.centerx + mania_text.get_rect().width/4, monster_rect.y + 80))
+
+        start_text = get_font_title(20).render("p r e s s   a n y   k e y   t o   s t a r t", True, COLOR_BLUEISH_GREEN)
+        start_rect = start_text.get_rect(center=(screen.get_width() / 2, mania_rect.y + 200))
+
+        #play_button = button_mod.Button(image, pos=(350, 350),text_input="PLAY", font=get_font_button(75), base_color=scrn_mod.COLOR_WHITE, hovering_color=scrn_mod.COLOR_WHITE)
+
+        screen.blit(monster_text, monster_rect)
+        screen.blit(mania_text, mania_rect)
+        screen.blit(start_text, start_rect)
+        #play_button.update(screen)
 
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 pygame.quit()
                 sys.exit()
-                
-            if event.type == pygame.MOUSEBUTTONDOWN:
-                if play_button.check_for_input(menu_mouse_pos):
-                    game()
-                
+
+            if event.type == pygame.KEYDOWN:
+                game()
+
         pygame.display.update()
-     
+
 
 # main loop
 def game():
-    global player_move_down, player_move_left, player_move_right, player_move_up, player_shoot
+    global player_move_down, player_move_left, player_move_right, player_move_up, player_shoot, sound_victory_played
     global game_loop, shoot_direction
     while game_loop == True:
 
@@ -130,7 +142,7 @@ def game():
             if event.type == pygame.QUIT:
                 game_loop = False
                 pygame.quit()
-            
+
             if event.type == pygame.KEYDOWN:
                 # movement controls
                 if event.key == pygame.K_a:
@@ -143,7 +155,6 @@ def game():
                     player_move_down = True
                 if event.key == pygame.K_SPACE:
                     spacebar = True
-
 
                 # directional shooting controls
                 if event.key == pygame.K_UP:
@@ -214,6 +225,16 @@ def game():
             screen.fill(COLOR_BLACK)
             screen.blit(victory_text, victory_text_rect)
 
+            if sound_victory_played == False:
+                sound_victory.play()
+                sound_victory_played = True
+
+        for enemy in wave_controller_mod.current_wave.enemies:
+            if enemy.life <= 0:
+                enemy.die()
+                wave_controller_mod.current_wave.enemies.remove(enemy)
+
         pygame.display.flip()
         pygame.time.Clock().tick(60)
+
 main_menu()

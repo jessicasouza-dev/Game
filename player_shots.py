@@ -15,7 +15,7 @@ damage_modifier = BASE_DAMAGE_MODIFIER
 BASE_SPEED = 30
 speed_value = BASE_SPEED
 
-BASE_COOLDOWN = 30 # cooldown counted in frames (60/sec)
+BASE_COOLDOWN = 20 # cooldown counted in frames (60/sec)
 cooldown_value = BASE_COOLDOWN
 
 BASE_PIERCE = 0
@@ -130,8 +130,13 @@ class player_projectile:
 
         for enemy in wave.enemies:
             if self.rect.colliderect(enemy.rect):
-                enemy.die()
-                wave.enemies.remove(enemy)
+
+                if enemy.life > 0:
+                    enemy.get_hit(damage_value)
+                elif enemy.life <= 0:
+                    enemy.die()
+                    wave.enemies.remove(enemy)
+
                 if self.pierce <= 0:
                     self.destroy()
                 else:
