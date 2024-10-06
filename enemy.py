@@ -92,6 +92,7 @@ class Enemy:
             player_mod.player_gets_hit(self.damage)
 
     def die(self):
+        player_shots_mod.explosion(self.rect.centerx, self.rect.centery)
         self.rect = pygame.Rect(0, 0, 0, 0)
         sound_enemy_dead.play()
 

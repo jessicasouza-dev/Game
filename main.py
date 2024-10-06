@@ -36,6 +36,7 @@ pygame.init()
 
 pygame.mixer.init()
 sound_player_shot = pygame.mixer.Sound('assets/laser-shot-ingame-230500.mp3')
+sound_player_shot.set_volume(0)
 sound_victory = pygame.mixer.Sound('assets/achievement-video-game-type-1-230515.mp3')
 
 # victory text
@@ -201,6 +202,7 @@ def game():
         player_mod.try_shooting(player_shoot, shoot_direction)
         life_mod.show_life()
         player_mod.player_render()
+        player_shots_mod.animate_explosions()
         wave_controller_mod.control_waves(waves)
 
         if wave_controller_mod.is_power_picked == False and wave_controller_mod.current_wave.isActive == False and wave_controller_mod.is_over == False and wave_mod.is_restarting == False:

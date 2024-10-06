@@ -23,7 +23,7 @@ damage_modifier = BASE_DAMAGE_MODIFIER
 BASE_SPEED = 15
 speed_value = BASE_SPEED
 
-BASE_COOLDOWN = 13 # cooldown counted in frames (60/sec)
+BASE_COOLDOWN = 18 # cooldown counted in frames (60/sec)
 cooldown_value = BASE_COOLDOWN
 
 BASE_PIERCE = 0
@@ -142,6 +142,7 @@ class player_projectile:
                     
     def destroy(self):
         projectile = self
+        explosion(self.rect.centerx, self.rect.centery)
         if projectile in active_friendly_projectiles:
             index = active_friendly_projectiles.index(projectile)
             del active_friendly_projectiles[index]
@@ -162,3 +163,44 @@ class player_projectile:
                     self.destroy()
                 else:
                     self.pierce -= 1
+
+explosion_1 = pygame.image.load('assets/player_sprites/slimeshot_explosion-1.png.png')
+explosion_2 = pygame.image.load('assets/player_sprites/slimeshot_explosion-2.png.png')
+explosion_3 = pygame.image.load('assets/player_sprites/slimeshot_explosion-3.png.png')
+explosion_1.set_alpha(164)
+explosion_2.set_alpha(164)
+explosion_3.set_alpha(164)
+
+active_explosions = []
+class explosion:
+    def __init__(self, centerx, centery):
+        self.rect = pygame.Rect(0, 0, 50, 50)
+        self.rect.centerx = centerx
+        self.rect.centery = centery
+        self.sprite_1 = explosion_1
+        self.sprite_2 = explosion_2
+        self.sprite_3 = explosion_3
+        self.sprite = self.sprite_1
+        self.innertimer = 0
+        active_explosions.append(self)
+
+    def run_animation(self):
+        if self.innertimer <= 4:
+            self.sprite = self.sprite_1
+        elif self.innertimer <= 8:
+            self.sprite = self.sprite_2
+        elif self.innertimer <= 16:
+            self.sprite = self.sprite_3
+        
+        self.sprite = pygame.transform.scale(self.sprite, (50, 50))
+        screen.blit(self.sprite, self.rect)
+        self.innertimer += 1
+
+        if self.innertimer > 16:
+            active_explosions.remove(self)
+
+def animate_explosions():
+    global active_explosions
+
+    for x in active_explosions:
+        x.run_animation()

@@ -85,3 +85,4 @@ class VerticalShot(Shot):
 
         if self.rect.top < screen.get_rect().top or self.rect.bottom > screen.get_rect().bottom:
             self.destroy()
+
