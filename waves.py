@@ -12,6 +12,7 @@ import wave_controller as wave_controller_mod
 cooldown = 60
 is_restarting = True
 delay = 5000
+health_multiplier = 1
 
 # load enemy sprites
 crawler_sprite_1 = pygame.image.load('assets/crawler_goblin_sprites/goblin_1.png')
@@ -58,13 +59,13 @@ class Wave:
 
                 if enemy_class == 'Shooter':
                     enemy_instance = enemy.Shooter(0, floor, 2,
-                                                    scrn_mod.screen, "right", player_mod.player_pos, number, 250, firegob_sprites)
+                                                    scrn_mod.screen, "right", player_mod.player_pos, number, 250 * health_multiplier, firegob_sprites)
                 elif enemy_class == 'Enemy':
                     enemy_instance = enemy.Enemy(0, floor, 3,
-                                                 scrn_mod.screen, "right", player_mod.player_pos, number, 300, crawler_sprites)
+                                                 scrn_mod.screen, "right", player_mod.player_pos, number, 300 * health_multiplier, crawler_sprites)
                 elif enemy_class == 'Sniper':
                     enemy_instance = enemy.Sniper(0, floor, 2,
-                                                   scrn_mod.screen, "right", player_mod.player_pos, number, 400, sniper_sprites)
+                                                   scrn_mod.screen, "right", player_mod.player_pos, number, 400 * health_multiplier, sniper_sprites)
 
                 self.enemies.append(enemy_instance)
                 self.enemies_dictionary_iteratable[enemy_class] -= 1

@@ -151,8 +151,9 @@ class player_projectile:
         projectile = self
 
         for enemy in wave.enemies:
-            if self.rect.colliderect(enemy.rect):
-
+            if self.rect.colliderect(enemy.rect) and not (self in enemy.shots_hit):
+                enemy.shots_hit.append(self)
+                explosion(self.rect.centerx, self.rect.centery)
                 if enemy.life > 0:
                     enemy.get_hit(damage_value)
                 elif enemy.life <= 0:
