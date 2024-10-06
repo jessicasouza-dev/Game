@@ -7,6 +7,7 @@ import player_behavior as player_mod
 import player_shots as player_shots_mod
 import os
 import enemy as enemy_mod
+import waves
 import waves as wave_mod
 import life as life_mod
 import power_ups as pwrup_mod
@@ -41,21 +42,23 @@ def control_waves(waves):
         current_wave = waves[last_number]
 
         if current_wave.isActive == True:
+            print("is active")
             current_wave.update()
             is_power_picked = False
             pwrup_mod.pwrups_shuffled = False
         else:
             if last_number + 1 <= len(waves):
 
-                if is_power_picked == False:
+                if is_power_picked == False and wave_mod.is_restarting == False:
                     if pwrup_mod.pwrups_shuffled == False:
                         pwrup_mod.randomize_bundles()
                     pwrup_mod.pwrups_picked = False
 
                 else:
-                    last_number += 1
-                    current_wave = waves[last_number]
-                    last_time = time
+                    if time - last_time >= delay:
+                        last_number += 1
+                        current_wave = waves[last_number]
+                        last_time = time
 
 
         if last_number == len(waves) - 1 and current_wave.isActive == False:

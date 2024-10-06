@@ -10,14 +10,17 @@ import enemy as enemy_mod
 import wave_controller as wave_controller_mod
 
 cooldown = 60
+is_restarting = True
+delay = 5000
 
 class Wave:
     def __init__(self, enemies_dictionary):
         super().__init__()
 
+        self.last_restart_time = 0
         self.enemies_dictionary = enemies_dictionary
         self.enemies_dictionary_iteratable = self.enemies_dictionary.copy()
-        self.spawn_delay = 3000
+        self.spawn_delay = 1000
         self.last_spawn_time = 0
         self.enemies = []
         self.enemies_added = 0
@@ -56,6 +59,8 @@ class Wave:
                 self.last_spawn_time = current_time
 
     def update(self):
+        global is_restarting
+        time = pygame.time.get_ticks()
         if self.isActive:
 
             self.add_enemies()
@@ -63,10 +68,16 @@ class Wave:
             for enemy in self.enemies:
                 enemy.act()
 
-            if len(self.enemies) == 0 and self.enemies_added == self.enemies_number > 0:
+            if len(self.enemies) == 0 and self.enemies_added == self.enemies_number:
                 self.isActive = False
+                is_restarting = False
+                self.last_restart_time = time
 
     def restart_waves(self):
+        global is_restarting
+        global delay
+
+        time = pygame.time.get_ticks()
 
         self.enemies_dictionary_iteratable = self.enemies_dictionary.copy()
         self.enemies.clear()
@@ -79,5 +90,7 @@ class Wave:
         player_mod.player_spawn()
         player_mod.player_render()
 
-        self.last_restart_time = pygame.time.get_ticks()
+        self.last_restart_time = time
+
+        is_restarting = True
 

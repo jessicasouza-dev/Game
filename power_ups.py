@@ -147,7 +147,7 @@ def randomize_bundles():
     print(offense_copy)
 
 
-    for bundle in range(2):
+    for bundle in range(3):
         bundle = []
 
         support = random.choice(support_copy)

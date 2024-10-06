@@ -18,6 +18,9 @@ import waves as wave_mod
 import wave_controller as wave_controller_mod
 import text_display as textbox_mod
 
+COLOR_WHITE = (255, 255, 255)
+COLOR_BLACK = (0, 0, 0)
+
 folder_path = os.path.dirname(__file__)
 os.chdir(folder_path)
 
@@ -27,43 +30,51 @@ player_move_left = player_move_right = player_move_up = player_move_down = playe
 
 pygame.init()
 
+# victory text
+victory_font = pygame.font.Font('PressStart2P.ttf', 20)
+victory_text = victory_font .render('VICTORY!!!', True, COLOR_WHITE, COLOR_BLACK)
+victory_text_rect = victory_text.get_rect()
+victory_text_rect.center = (scrn_mod.screen.get_width()/2, scrn_mod.screen.get_height()/2)
+
 floor_mod.create_floors()
 player_mod.player_spawn()
 power_up_mod.randomize_bundles()
 
-# instant power ups for the purposes of testing
-None
+DELAY = 5000
 
-
-shoot_direction = 'right'
-
-# main loop
 game_loop = True
 
 wave_config1 = {
-    'Shooter': 0,
-    'Enemy': 0,
-    'Sniper': 1
+    'Shooter': 10,
+    'Enemy': 15,
+    'Sniper': 5
 }
 
 wave_config2 = {
-    'Shooter': 0,
-    'Enemy': 1,
-    'Sniper': 0
+    'Shooter': 15,
+    'Enemy': 20,
+    'Sniper': 10
 }
 
 wave_config3 = {
-    'Shooter': 0,
-    'Enemy': 1,
-    'Sniper': 0
+    'Shooter': 20,
+    'Enemy': 25,
+    'Sniper': 15
 }
 
 wave1 = wave_mod.Wave(wave_config1)
 wave2 = wave_mod.Wave(wave_config2)
 wave3 = wave_mod.Wave(wave_config2)
-waves = [wave1, wave2, wave3]
+waves = [wave1]
+
+
+shoot_direction = 'right'
+
+# main loop
 
 while game_loop == True:
+
+    time = pygame.time.get_ticks()
 
     screen.fill(temporary_screen_color)
     floor_mod.render_floors()
@@ -131,7 +142,7 @@ while game_loop == True:
     player_mod.player_render()
     wave_controller_mod.control_waves(waves)
 
-    if wave_controller_mod.is_power_picked == False and wave_controller_mod.current_wave.isActive == False and wave_controller_mod.is_over == False:
+    if wave_controller_mod.is_power_picked == False and wave_controller_mod.current_wave.isActive == False and wave_controller_mod.is_over == False and wave_mod.is_restarting == False:
         power_up_mod.do_selection(spacebar)
         textbox_mod.display_powerup_info()
 
@@ -143,12 +154,15 @@ while game_loop == True:
         projectile.update()
 
     if life_mod.life == 0:
-        wave_controller_mod.current_wave.restart_waves()
-        life_mod.life = life_mod.max_life
-        wave_controller_mod.change_last_number()
+
+        if time - DELAY > wave_controller_mod.current_wave.last_restart_time:
+            wave_controller_mod.current_wave.restart_waves()
+            life_mod.life = life_mod.max_life
+            wave_controller_mod.change_last_number()
 
     if wave_controller_mod.is_over == True:
-        print("VICTORY")
+        screen.fill(COLOR_BLACK)
+        screen.blit(victory_text, victory_text_rect)
 
     pygame.display.flip()
     pygame.time.Clock().tick(60)
