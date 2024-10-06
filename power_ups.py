@@ -31,8 +31,8 @@ def powerup_damageup():
 
 
 def powerup_firerateup():
-    # -25% shot cooldown, multiplicative
-    shots_mod.cooldown_value *= 0.75
+    # -33% shot cooldown, multiplicative
+    shots_mod.cooldown_value *= 0.67
     round(shots_mod.cooldown_value)
 
 
@@ -44,7 +44,6 @@ def powerup_multishot():
         shots_mod.multishot_value += 1
 
     shots_mod.size_value *= 0.90
-    shots_mod.damage_modifier *= 0.67
     shots_mod.inaccuracy_value += 1
 
 
@@ -54,14 +53,14 @@ def powerup_pierceup():
 
 
 def powerup_move_speed():
-    # +25% player sideways movement speed, additively
-    player_mod.player_move_speed += player_mod.PLAYER_BASE_SPEED * 1.25
+    # +40% player sideways movement speed, additively
+    player_mod.player_move_speed += player_mod.PLAYER_BASE_SPEED * 0.4
     round(player_mod.player_move_speed)
 
 
 def powerup_climb_speed():
-    # -20% up/down between floors movement cooldown, additively, down to a minimum of 5 frames
-    player_mod.player_updown_cd -= player_mod.BASE_UPDOWN_CD * 0.2
+    # -33% up/down between floors movement cooldown, additively, down to a minimum of 5 frames
+    player_mod.player_updown_cd -= player_mod.BASE_UPDOWN_CD * 0.33
     if player_mod.player_updown_cd < 5:
         player_mod.player_updown_cd = 5
 
@@ -105,7 +104,7 @@ class powerup:
             self.text = "+50% damage!"
         elif self.effect == powerup_firerateup:
             self.sprite = pygame.image.load('assets/power_up_sprites/fire_rate_up_placeholder.jpg')
-            self.text = "Shoot 25% faster!"
+            self.text = "Shoot 33% faster!"
         elif self.effect == powerup_pierceup:
             self.sprite = pygame.image.load('assets/power_up_sprites/pierce_up_placeholder.png')
             self.text = "Shots pass through one floor/enemy!"
@@ -114,10 +113,10 @@ class powerup:
             self.text = "More bullets per shot"
         elif self.effect == powerup_move_speed:
             self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_leftright_placeholder.jpg')
-            self.text = "Speed +25%!"
+            self.text = "Speed +40%!"
         elif self.effect == powerup_climb_speed:
             self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_updown_placeholder.jpg')
-            self.text = "Climbing speed +20%!"
+            self.text = "Climbing speed +33%!"
         elif self.effect == powerup_instaheal:
             self.sprite = pygame.image.load('assets/power_up_sprites/small_heal_placeholder.jpg')
             self.text = "Recover 30% of health!"

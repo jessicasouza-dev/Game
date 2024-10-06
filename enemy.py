@@ -147,7 +147,7 @@ class Shooter(Enemy):
     def shoot(self):
         global cooldown
         if cooldown == 0:
-            y = self.rect.centery
+            y = self.rect.top
             x = self.rect.centerx
             sound_enemy.play()
             shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 15, self.surface, self.direction, self))

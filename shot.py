@@ -9,6 +9,10 @@ import life as life_mod
 active_projectiles = []
 screen = screen_mod.screen
 
+fireshot_sprite_1 = pygame.image.load('assets/fire_goblin_sprites/fireshot-1.png')
+fireshot_sprite_2 = pygame.image.load('assets/fire_goblin_sprites/fireshot-2.png')
+fireshot_sprites = [fireshot_sprite_1, fireshot_sprite_2]
+
 pygame.mixer.init()
 sound_enemy = pygame.mixer.Sound('assets/synth-shot-fx-by-alien-i-trust-9-245434.mp3')
 
@@ -23,8 +27,13 @@ class Shot:
         self.trajectory = direction
         self.enemy = enemy
         self.color = (255, 255, 255)
-        self.rect = pygame.Rect(x, y, 10, 10)
-        self.damage = 5
+        self.rect = pygame.Rect(x, y, 50, 50)
+        self.rect.centerx = x
+        self.rect.centery = y
+        self.damage = 25
+        self.spritesheet = fireshot_sprites
+        self.sprite_index = 0
+        self.sprite = fireshot_sprite_1
 
     def update(self):
         self.render()
@@ -32,10 +41,14 @@ class Shot:
         self.hurt()
 
     def render(self):
-        pygame.draw.rect(self.surface, self.color, self.rect)
+        self.sprite = pygame.transform.scale(self.sprite, (50, 50))
+        screen.blit(self.sprite, self.rect)
 
     def move(self):
+        self.sprite_index = (self.sprite_index + 1) % 2
+        self.sprite = fireshot_sprites[self.sprite_index]
         if self.trajectory == 'left':
+            self.sprite = pygame.transform.flip(self.sprite, True, False)
             self.rect.centerx -= self.speed
         elif self.trajectory == 'right':
             self.rect.centerx += self.speed
@@ -60,10 +73,15 @@ class VerticalShot(Shot):
         self.damage = 15
 
     def move(self):
+        self.sprite_index = (self.sprite_index + 1) % 2
+        self.sprite = fireshot_sprites[self.sprite_index]
+
         if self.player.current_layer >= self.enemy.current_layer:
             self.rect.centery += self.speed
+            self.sprite = pygame.transform.rotate(self.sprite, 270)
         else:
             self.rect.centery -= self.speed
+            self.sprite = pygame.transform.rotate(self.sprite, 90)
 
         if self.rect.top < screen.get_rect().top or self.rect.bottom > screen.get_rect().bottom:
             self.destroy()
