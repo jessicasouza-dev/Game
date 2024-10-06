@@ -8,6 +8,9 @@ player_color_temporary = (0, 252, 0)
 
 current_layer = 2
 
+pygame.mixer.init()
+sound_floors = pygame.mixer.Sound("assets\mixkit-player-jumping-in-a-video-game-2043.wav")
+
 # player sizes
 PLAYER_WIDTH = 32
 PLAYER_HEIGHT = 64
@@ -73,11 +76,13 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
     if current_updown_cd == 0:
         #print('debug: up/down movement possible')
         if player_move_up == True and player_move_down == False:
+            sound_floors.play()
             #print('debug: attempting move up')
             if current_layer != 0:
                 current_layer -= 1
                 current_updown_cd = player_updown_cd
         if player_move_down == True and player_move_up == False:
+            sound_floors.play()
             if current_layer != 4:
                 current_layer += 1
                 current_updown_cd = player_updown_cd

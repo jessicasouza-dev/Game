@@ -31,6 +31,9 @@ player_move_left = player_move_right = player_move_up = player_move_down = playe
 
 pygame.init()
 
+pygame.mixer.init()
+sound_player_shot =  pygame.mixer.Sound('assets\laser-shot-ingame-230500.mp3')
+
 # victory text
 victory_font = pygame.font.Font('PressStart2P.ttf', 20)
 victory_text = victory_font .render('VICTORY!!!', True, COLOR_WHITE, COLOR_BLACK)
@@ -145,14 +148,18 @@ def game():
                 # directional shooting controls
                 if event.key == pygame.K_UP:
                     shoot_direction = 'up'
+                    sound_player_shot.play()
                     player_shoot = True
                 if event.key == pygame.K_DOWN:
+                    sound_player_shot.play()
                     shoot_direction = 'down'
                     player_shoot = True
                 if event.key == pygame.K_LEFT:
+                    sound_player_shot.play()
                     shoot_direction = 'left'
                     player_shoot = True
                 if event.key == pygame.K_RIGHT:
+                    sound_player_shot.play()
                     shoot_direction = 'right'
                     player_shoot = True
 
