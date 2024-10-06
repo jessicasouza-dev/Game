@@ -12,8 +12,8 @@ enemy_color_temporary = (0, 0, 252)
 current_direction = 'right'
 enemy_pos = pygame.Rect(50, 50, 50, floor_mod.floor_size_y)
 
-ENEMY_WIDTH = 32
-ENEMY_HEIGHT = 64
+ENEMY_WIDTH = 50
+ENEMY_HEIGHT = 50
 
 cooldown = 0
 sniper_cooldown = 0
@@ -23,8 +23,10 @@ pygame.mixer.init()
 sound_enemy = pygame.mixer.Sound('assets/synth-shot-fx-by-alien-i-trust-9-245434.mp3')
 
 
+
+
 class Enemy:
-    def __init__(self, x, y, speed, surface, direction, player, current_layer):
+    def __init__(self, x, y, speed, surface, direction, player, current_layer, health, spritesheet):
         super().__init__()
 
         self.x = x
@@ -41,7 +43,11 @@ class Enemy:
         self.current_layer = current_layer
         self.rect.centerx = x
         self.rect.centery = y
-        self.life = 100
+        self.life = health
+        self.spritesheet = spritesheet
+        self.sprite_index = 0
+        self.sprite = self.spritesheet[self.sprite_index]
+        self.sprite_change_timer = 6
 
     def act(self):
         self.drawEnemy()
@@ -49,15 +55,25 @@ class Enemy:
         self.enemy_hit_player(self.player)
 
     def drawEnemy(self):
-        pygame.draw.rect(self.surface, self.color, self.rect, width=0)
+        self.sprite = pygame.transform.scale(self.sprite, (ENEMY_WIDTH, ENEMY_HEIGHT))
+        screen_mod.screen.blit(self.sprite, self.rect)
 
     def wander(self):
+        #update sprite
+        if self.sprite_change_timer <= 0:
+            self.sprite_index = (self.sprite_index + 1) % 2
+            self.sprite_change_timer = random.randint(6, 12)
+        else:
+            self.sprite_change_timer -= 1
+        self.sprite = self.spritesheet[self.sprite_index]
+
         if self.direction == 'right':
             self.x += self.speed
             if self.x + self.width >= screen_mod.screen.get_width():
                 self.x = screen_mod.screen.get_width() - self.width
                 self.direction = 'left'
         else:
+            self.sprite = pygame.transform.flip(self.sprite, True, False)
             self.x -= self.speed
             if self.x <= 0:
                 self.x = 0
@@ -79,14 +95,15 @@ class Enemy:
 
 
 class Shooter(Enemy):
-    def __init__(self, x, y, speed, surface, direction, player, current_layer):
-        super().__init__(x, y, speed, surface, direction, player, current_layer)
+    def __init__(self, x, y, speed, surface, direction, player, current_layer, health, spritesheet):
+        super().__init__(x, y, speed, surface, direction, player, current_layer, health, spritesheet)
         self.is_shooting = False
         self.delay = 500
         self.last_time = 0
         self.already_shot = False
         self.switch = False
-        self.life = 200
+        self.life = health
+        self.spritesheet = spritesheet
         self.time = 90
         self.saw_player = False
 
@@ -135,15 +152,16 @@ class Shooter(Enemy):
 
 
 class Sniper(Enemy):
-    def __init__(self, x, y, speed, surface, direction, player, current_layer):
-        super().__init__(x, y, speed, surface, direction, player, current_layer)
+    def __init__(self, x, y, speed, surface, direction, player, current_layer, health, spritesheet):
+        super().__init__(x, y, speed, surface, direction, player, current_layer, health, spritesheet)
         self.is_shooting = False
         self.delay = 500
         self.color = (255, 0, 0)
         self.last_time = 0
         self.last_time_walk = 0
         self.already_shot = False
-        self.life = 300
+        self.life = health
+        self.spritesheet = spritesheet
         self.wandering = True
         self.shooting_at_player = False
         self.found_player = False

@@ -6,16 +6,24 @@ shots_temporary_color = (255, 100, 0)
 
 screen = screen_mod.screen
 
+# load sprites
+
+sprite_1 = pygame.image.load('assets\player_sprites\slimeshot-1.png.png')
+sprite_2 = pygame.image.load('assets\player_sprites\slimeshot-2.png.png')
+sprite_1.set_alpha(164)
+sprite_2.set_alpha(164)
+sprites = [sprite_1, sprite_2]
+
 # base shot stats and variables with current stats that can be modified during gameplay
 BASE_DAMAGE = 100
 BASE_DAMAGE_MODIFIER = 1
 damage_value = BASE_DAMAGE
 damage_modifier = BASE_DAMAGE_MODIFIER
 
-BASE_SPEED = 30
+BASE_SPEED = 15
 speed_value = BASE_SPEED
 
-BASE_COOLDOWN = 20 # cooldown counted in frames (60/sec)
+BASE_COOLDOWN = 13 # cooldown counted in frames (60/sec)
 cooldown_value = BASE_COOLDOWN
 
 BASE_PIERCE = 0
@@ -24,7 +32,7 @@ pierce_value = BASE_PIERCE
 BASE_BOUNCE = 0
 bounce_value = BASE_BOUNCE
 
-BASE_SIZE = floor_mod.floor_size_y/5
+BASE_SIZE = floor_mod.floor_size_y/2
 size_value = BASE_SIZE
 
 BASE_INACCURACY = 0 #%
@@ -48,6 +56,10 @@ class player_projectile:
         self.pierce = pierce_value
         self.bounce = bounce_value
         self.trajectory = movement_direction
+        self.size = size_value
+        self.sprite_list = sprites
+        self.sprite_index = 0
+        self.sprite = self.sprite_list[self.sprite_index]
 
         if inaccuracy_value != 0:
             self.inaccuracy_y = (speed_value * (1 + (random.randrange(inaccuracy_value * -1, inaccuracy_value) / 100))) / 10
@@ -68,19 +80,28 @@ class player_projectile:
         self.floors_pierced = [self.original_layer]
 
     def render(self):
-        pygame.draw.rect(screen, shots_temporary_color, self.rect)
+        screen.blit(self.sprite, self.rect)
     
     def move(self):
+        self.sprite = self.sprite_list[self.sprite_index]
+
         if self.trajectory == 'left':
             self.rect.centerx -= self.speed
+            self.sprite = pygame.transform.rotate(self.sprite, 180)
         elif self.trajectory == 'right':
             self.rect.centerx += self.speed
         elif self.trajectory == 'up':
+            self.sprite = pygame.transform.rotate(self.sprite, 90)
             self.rect.centery -= self.speed
         elif self.trajectory == 'down':
             self.rect.centery += self.speed
+            self.sprite = pygame.transform.rotate(self.sprite, 270)
         self.rect.centerx += self.inaccuracy_x
         self.rect.centery += self.inaccuracy_y
+
+        self.sprite = pygame.transform.scale(self.sprite, (self.size, self.size))
+
+        self.sprite_index = (self.sprite_index + 1) % 2
 
         self.check_hit()
         #print('debug: moving a projectile')

@@ -24,7 +24,7 @@ def powerup_damageup():
     # +20% damage, additively
     # size up slightly
     # shot flight speed down slightly
-    shots_mod.damage_value += 20
+    shots_mod.damage_value += 50
     if shots_mod.size_value * 1.1 <= floor_mod.floor_size_y * 0.8:
         shots_mod.size_value *= 1.1
     shots_mod.speed_value *= 0.9
@@ -102,13 +102,13 @@ class powerup:
 
         if self.effect == powerup_damageup:
             self.sprite = pygame.image.load('assets/power_up_sprites/damage_up_placeholder.jpg')
-            self.text = "+20% damage!"
+            self.text = "+50% damage!"
         elif self.effect == powerup_firerateup:
             self.sprite = pygame.image.load('assets/power_up_sprites/fire_rate_up_placeholder.jpg')
             self.text = "Shoot 25% faster!"
         elif self.effect == powerup_pierceup:
             self.sprite = pygame.image.load('assets/power_up_sprites/pierce_up_placeholder.png')
-            self.text = "Shots pass through one floor!"
+            self.text = "Shots pass through one floor/enemy!"
         elif self.effect == powerup_multishot:
             self.sprite = pygame.image.load('assets/power_up_sprites/multishot_placeholder.jpg')
             self.text = "More bullets per shot"

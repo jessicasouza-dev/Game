@@ -54,20 +54,20 @@ game_loop = True
 
 wave_config1 = {
     'Shooter': 0,
-    'Enemy': 20,
+    'Enemy': 10,
     'Sniper': 0
 }
 
 wave_config2 = {
-    'Shooter': 20,
-    'Enemy': 30,
+    'Shooter': 5,
+    'Enemy': 10,
     'Sniper': 0
 }
 
 wave_config3 = {
-    'Shooter': 30,
-    'Enemy': 40,
-    'Sniper': 20
+    'Shooter': 0,
+    'Enemy': 10,
+    'Sniper': 5
 }
 
 wave1 = wave_mod.Wave(wave_config1)

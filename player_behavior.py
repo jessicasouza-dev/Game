@@ -38,6 +38,27 @@ invincible = False
 invincible_time = 0 
 invincible_duration = 3000
 
+# load sprites
+slime_sprite_1 = pygame.image.load('assets/player_sprites/rectangle_slime_1.png')
+slime_sprite_2 = pygame.image.load('assets/player_sprites/rectangle_slime_2.png')
+eye_sprite_left = pygame.image.load('assets/player_sprites/eye_stare_left.png')
+eye_sprite_right = pygame.image.load('assets/player_sprites/eye_stare_right.png')
+eye_sprite_up = pygame.image.load('assets/player_sprites/eye_stare_up.png')
+eye_sprite_down = pygame.image.load('assets/player_sprites/eye_stare_down.png')
+slime_sprite_1.set_alpha(164)
+slime_sprite_2.set_alpha(164)
+
+slime_sprite_1 = pygame.transform.scale(slime_sprite_1, (floor_mod.floor_size_y/2, floor_mod.floor_size_y))
+slime_sprite_2 = pygame.transform.scale(slime_sprite_1, ((floor_mod.floor_size_y/2) + 10, floor_mod.floor_size_y - 10))
+eye_sprite_down = pygame.transform.scale(eye_sprite_down, (floor_mod.floor_size_y/2, floor_mod.floor_size_y))
+eye_sprite_left = pygame.transform.scale(eye_sprite_left, (floor_mod.floor_size_y/2, floor_mod.floor_size_y))
+eye_sprite_right = pygame.transform.scale(eye_sprite_right, (floor_mod.floor_size_y/2, floor_mod.floor_size_y))
+eye_sprite_up = pygame.transform.scale(eye_sprite_up, (floor_mod.floor_size_y/2, floor_mod.floor_size_y))
+
+current_slime_sprite = slime_sprite_1
+current_eye_sprite = eye_sprite_right
+movement_sprite_change = 50
+
 def player_spawn():
     global current_layer
 
@@ -47,7 +68,8 @@ def player_spawn():
 
 def player_render():
     if player_visible == True:
-        pygame.draw.rect(screen, player_color_temporary, player_pos)
+        screen.blit(current_eye_sprite, player_pos)
+        screen.blit(current_slime_sprite, player_pos)
 
 def player_death():
     global player_pos
@@ -59,12 +81,28 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
     global current_layer
     global current_updown_cd
     global current_direction
+    global current_slime_sprite
+    global movement_sprite_change
 
+    is_moving = False
     # if movement boolean values match, move player position
     if player_move_left == True and player_move_right == False:
         player_pos.x -= player_move_speed
+        is_moving = True
     if player_move_right == True and player_move_left == False:
         player_pos.x += player_move_speed
+        is_moving = True
+
+    # change current sprite based on movement
+    if is_moving:
+        if movement_sprite_change <= 0:
+            if current_slime_sprite == slime_sprite_1:
+                current_slime_sprite = slime_sprite_2
+            else:
+                current_slime_sprite = slime_sprite_1
+            movement_sprite_change = 50
+        else:
+            movement_sprite_change -= player_move_speed
 
     # if player is out of bounds, relocate to valid position
     if player_pos.left < screen.get_rect().left:
@@ -94,6 +132,7 @@ def player_movement(player_move_left, player_move_right, player_move_up, player_
 def try_shooting(is_shooting, direction):
     global shooting_cooldown
     global current_direction
+    global current_eye_sprite
     #print('debug: running try_shooting function')
 
     current_direction = direction
@@ -104,6 +143,16 @@ def try_shooting(is_shooting, direction):
             for shot in range(player_shots_mod.multishot_value):
                 player_shots_mod.active_friendly_projectiles.append(player_shots_mod.player_projectile(player_pos.centerx, y, current_direction))
             shooting_cooldown = player_shots_mod.cooldown_value
+
+            if direction == 'left':
+                current_eye_sprite = eye_sprite_left
+            if direction == 'right':
+                current_eye_sprite = eye_sprite_right
+            if direction == 'up':
+                current_eye_sprite = eye_sprite_up
+            if direction == 'down':
+                current_eye_sprite = eye_sprite_down
+
         #print('debug: player ready to shoot')
     else:
         shooting_cooldown -= 1

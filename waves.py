@@ -13,6 +13,19 @@ cooldown = 60
 is_restarting = True
 delay = 5000
 
+# load enemy sprites
+crawler_sprite_1 = pygame.image.load('assets/crawler_goblin_sprites/goblin_1.png')
+crawler_sprite_2 = pygame.image.load('assets/crawler_goblin_sprites/goblin_2.png')
+crawler_sprites = [crawler_sprite_1, crawler_sprite_2]
+
+firegob_sprite_1 = pygame.image.load('assets/fire_goblin_sprites/fire goblin-1.png')
+firegob_sprite_2 = pygame.image.load('assets/fire_goblin_sprites/fire goblin-2.png')
+firegob_sprites = [firegob_sprite_1, firegob_sprite_2]
+
+sniper_sprite_1 = pygame.image.load('assets/sniper_goblin_sprites/sniper goblin-1.png')
+sniper_sprite_2 = pygame.image.load('assets/sniper_goblin_sprites/sniper goblin-2.png')
+sniper_sprites = [sniper_sprite_1, sniper_sprite_2]
+
 class Wave:
     def __init__(self, enemies_dictionary):
         super().__init__()
@@ -44,14 +57,14 @@ class Wave:
                 floor = floor_mod.floors_bottom_y_list[number]
 
                 if enemy_class == 'Shooter':
-                    enemy_instance = enemy.Shooter(0, floor, 5,
-                                                    scrn_mod.screen, "right", player_mod.player_pos, number)
+                    enemy_instance = enemy.Shooter(0, floor, 2,
+                                                    scrn_mod.screen, "right", player_mod.player_pos, number, 250, firegob_sprites)
                 elif enemy_class == 'Enemy':
-                    enemy_instance = enemy.Enemy(0, floor, 5,
-                                                 scrn_mod.screen, "right", player_mod.player_pos, number)
+                    enemy_instance = enemy.Enemy(0, floor, 3,
+                                                 scrn_mod.screen, "right", player_mod.player_pos, number, 300, crawler_sprites)
                 elif enemy_class == 'Sniper':
-                    enemy_instance = enemy.Sniper(0, floor, 5,
-                                                   scrn_mod.screen, "right", player_mod.player_pos, number)
+                    enemy_instance = enemy.Sniper(0, floor, 2,
+                                                   scrn_mod.screen, "right", player_mod.player_pos, number, 400, sniper_sprites)
 
                 self.enemies.append(enemy_instance)
                 self.enemies_dictionary_iteratable[enemy_class] -= 1
