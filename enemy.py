@@ -21,6 +21,9 @@ delay = 100
 
 pygame.mixer.init()
 sound_enemy = pygame.mixer.Sound('assets/synth-shot-fx-by-alien-i-trust-9-245434.mp3')
+sound_enemy_hit = pygame.mixer.Sound('assets/cartoon-splat-6086.mp3')
+sound_enemy_dead = pygame.mixer.Sound('assets/goblin-death-clash-of-clans.mp3')
+sound_enemy_dead.set_volume(0.4)
 
 
 
@@ -37,6 +40,7 @@ class Enemy:
         self.player = player
         self.color = (0, 0, 128)
         self.speed = speed
+        self.usual_speed = speed
         self.damage = 5
         self.surface = surface
         self.rect = pygame.Rect(x, y, self.width, self.height)
@@ -89,9 +93,11 @@ class Enemy:
 
     def die(self):
         self.rect = pygame.Rect(0, 0, 0, 0)
+        sound_enemy_dead.play()
 
     def get_hit(self, damage):
         self.life = self.life - damage
+        sound_enemy_hit.play()
 
 
 class Shooter(Enemy):
@@ -135,7 +141,7 @@ class Shooter(Enemy):
             self.time = 0
 
         if self.time == 0:
-            self.speed = 5
+            self.speed = self.usual_speed
             self.saw_player = True
 
     def shoot(self):
@@ -207,7 +213,7 @@ class Sniper(Enemy):
                 self.last_time_walk = current_time
 
         if self.wandering:
-            self.speed = 5
+            self.speed = self.usual_speed
         else:
             self.speed = 0
 

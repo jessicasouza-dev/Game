@@ -49,7 +49,7 @@ slime_sprite_1.set_alpha(164)
 slime_sprite_2.set_alpha(164)
 
 slime_sprite_1 = pygame.transform.scale(slime_sprite_1, (floor_mod.floor_size_y/2, floor_mod.floor_size_y))
-slime_sprite_2 = pygame.transform.scale(slime_sprite_1, ((floor_mod.floor_size_y/2) + 10, floor_mod.floor_size_y - 10))
+slime_sprite_2 = pygame.transform.scale(slime_sprite_2, ((floor_mod.floor_size_y/2 + 6), floor_mod.floor_size_y + 3))
 eye_sprite_down = pygame.transform.scale(eye_sprite_down, (floor_mod.floor_size_y/2, floor_mod.floor_size_y))
 eye_sprite_left = pygame.transform.scale(eye_sprite_left, (floor_mod.floor_size_y/2, floor_mod.floor_size_y))
 eye_sprite_right = pygame.transform.scale(eye_sprite_right, (floor_mod.floor_size_y/2, floor_mod.floor_size_y))
