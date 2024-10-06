@@ -9,6 +9,9 @@ import life as life_mod
 active_projectiles = []
 screen = screen_mod.screen
 
+pygame.mixer.init()
+sound_enemy = pygame.mixer.Sound('assets\synth-shot-fx-by-alien-i-trust-9-245434.mp3')
+
 
 class Shot:
     def __init__(self, x, y, speed, surface, direction, enemy):

@@ -19,6 +19,9 @@ cooldown = 0
 sniper_cooldown = 0
 delay = 100
 
+pygame.mixer.init()
+sound_enemy = pygame.mixer.Sound('assets\synth-shot-fx-by-alien-i-trust-9-245434.mp3')
+
 time = 60
 
 
@@ -120,6 +123,7 @@ class Shooter(Enemy):
             print('debug: enemy ready to shoot')
             y = self.rect.centery
             x = self.rect.centerx
+            sound_enemy.play()
             shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 15, self.surface, self.direction, self))
             cooldown = 20
         elif cooldown != 0:
@@ -173,6 +177,7 @@ class Sniper(Enemy):
             self.wandering = False
             if current_time - self.last_time_walk >= self.delay:
                 self.shoot()
+                sound_enemy.play()
                 print(f"debug: atirou")
                 self.already_shot = True
                 self.last_time_walk = current_time
