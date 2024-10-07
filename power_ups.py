@@ -113,13 +113,8 @@ class powerup:
             self.sprite = pygame.image.load('assets/power_up_sprites/multishot.png')
             self.text = "More bullets per shot"
         elif self.effect == powerup_move_speed:
-<<<<<<< HEAD
             self.sprite = pygame.image.load('assets/power_up_sprites/move_speed.png')
             self.text = "Speed +40%!"
-=======
-            self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_leftright_placeholder.jpg')
-            self.text = "Speed +30%!"
->>>>>>> 594342b18ab559e2a86a827553ac6308c89ec0bf
         elif self.effect == powerup_climb_speed:
             self.sprite = pygame.image.load('assets/power_up_sprites/climb_speed.png')
             self.text = "Climbing speed +33%!"
