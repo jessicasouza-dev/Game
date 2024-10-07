@@ -16,12 +16,12 @@ PLAYER_WIDTH = 32
 PLAYER_HEIGHT = 64
 
 # player movement speed, could be changed by power-ups once those are implemented
-PLAYER_BASE_SPEED = 5
+PLAYER_BASE_SPEED = 9
 player_move_speed = PLAYER_BASE_SPEED
 
 # player cooldown time in frames for moving up or down layers, also possible to change
 # initially 1/2 of a second
-BASE_UPDOWN_CD = 30
+BASE_UPDOWN_CD = 12
 player_updown_cd = BASE_UPDOWN_CD
 current_updown_cd = 0
 
@@ -36,7 +36,7 @@ screen = screen_mod.screen
 
 invincible = False
 invincible_time = 0 
-invincible_duration = 3000
+invincible_duration = 1500
 
 # load sprites
 slime_sprite_1 = pygame.image.load('assets/player_sprites/rectangle_slime_1.png')

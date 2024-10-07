@@ -54,8 +54,8 @@ def powerup_pierceup():
 
 
 def powerup_move_speed():
-    # +40% player sideways movement speed, additively
-    player_mod.player_move_speed += player_mod.PLAYER_BASE_SPEED * 0.4
+    # +30% player sideways movement speed, additively
+    player_mod.player_move_speed += player_mod.PLAYER_BASE_SPEED * 0.3
     round(player_mod.player_move_speed)
 
 
@@ -114,7 +114,7 @@ class powerup:
             self.text = "More bullets per shot"
         elif self.effect == powerup_move_speed:
             self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_leftright_placeholder.jpg')
-            self.text = "Speed +40%!"
+            self.text = "Speed +30%!"
         elif self.effect == powerup_climb_speed:
             self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_updown_placeholder.jpg')
             self.text = "Climbing speed +33%!"

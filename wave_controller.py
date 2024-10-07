@@ -16,7 +16,7 @@ wave_config = {}
 
 last_number = 0
 current_wave = wave_mod.Wave(wave_config)
-delay = 5000
+delay = 2500
 last_time = 0
 
 is_over = False

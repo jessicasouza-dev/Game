@@ -15,7 +15,7 @@ ENEMY_HEIGHT = 50
 
 cooldown = 0
 sniper_cooldown = 0
-delay = 100
+delay = 50
 
 pygame.mixer.init()
 sound_enemy = pygame.mixer.Sound('assets/synth-shot-fx-by-alien-i-trust-9-245434.mp3')
@@ -51,12 +51,12 @@ class Enemy:
         self.rect = pygame.Rect(x, y, self.width, self.height)
         self.current_layer = current_layer
         self.rect.centerx = self.x
-        self.rect.centery = self.y - (self.height -25)
+        self.rect.centery = self.y - (self.height - 25)
         self.life = health
         self.spritesheet = spritesheet
         self.sprite_index = 0
         self.sprite = self.spritesheet[self.sprite_index]
-        self.sprite_change_timer = 6
+        self.sprite_change_timer = 3
         self.shots_hit = []
 
     def act(self):
@@ -111,14 +111,14 @@ class Shooter(Enemy):
     def __init__(self, x, y, speed, surface, direction, player, current_layer, health, spritesheet):
         super().__init__(x, y, speed, surface, direction, player, current_layer, health, spritesheet)
         self.is_shooting = False
-        self.delay = 1200
+        self.delay = 600
         self.cooldown = 0  
         self.last_time = pygame.time.get_ticks()  
         self.life = health
         self.spritesheet = spritesheet
-        self.time = 45
-        self.shoot_windup = 45
-        self.current_shoot_windup = 45
+        self.time = 30
+        self.shoot_windup = 30
+        self.current_shoot_windup = 30
         self.shoot_startup = False
         self.saw_player = False
 
@@ -165,7 +165,7 @@ class Sniper(Enemy):
     def __init__(self, x, y, speed, surface, direction, player, current_layer, health, spritesheet):
         super().__init__(x, y, speed, surface, direction, player, current_layer, health, spritesheet)
         self.is_shooting = False
-        self.delay = 2900
+        self.delay = 1450
         self.color = (255, 0, 0)
         self.last_time = 0
         self.last_time_walk = 0
@@ -213,5 +213,5 @@ class Sniper(Enemy):
     def shoot(self):
         y = self.rect.centery
         x = self.rect.centerx
-        shot_mod.active_projectiles.append(shot_mod.VerticalShot(x, y, 15,
+        shot_mod.active_projectiles.append(shot_mod.VerticalShot(x, y, 30,
                                                              self.surface, self.direction, self, player_mod))

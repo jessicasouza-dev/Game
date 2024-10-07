@@ -282,6 +282,6 @@ def game():
                 wave_controller_mod.current_wave.enemies.remove(enemy)
 
         pygame.display.flip()
-        pygame.time.Clock().tick(60)
+        pygame.time.Clock().tick(45)
 
 main_menu()
