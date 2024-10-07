@@ -26,9 +26,9 @@ def show_life():
     pygame.draw.rect(scrn_mod.screen, background_color, (bar_x, bar_y, bar_width, bar_height))
     pygame.draw.rect(scrn_mod.screen, life_color, (bar_x, bar_y, current_bar_width, bar_height))
 
-    life_font = pygame.font.Font("assets/fonts/Woodstamp.otf", 30)
+    life_font = pygame.font.Font("PressStart2P.ttf", 12)
     life_text = life_font.render(f"Life: {life}", True, scrn_mod.COLOR_WHITE, scrn_mod.COLOR_BLACK)
-    scrn_mod.screen.blit(life_text, (bar_x - 80, bar_y))
+    scrn_mod.screen.blit(life_text, (bar_x - 120, bar_y + bar_height/4 + 5))
     
     
     
