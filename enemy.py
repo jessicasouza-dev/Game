@@ -112,10 +112,9 @@ class Shooter(Enemy):
     def __init__(self, x, y, speed, surface, direction, player, current_layer, health, spritesheet):
         super().__init__(x, y, speed, surface, direction, player, current_layer, health, spritesheet)
         self.is_shooting = False
-        self.delay = 500
-        self.last_time = 0
-        self.already_shot = False
-        self.switch = False
+        self.delay = 1200
+        self.cooldown = 0  
+        self.last_time = pygame.time.get_ticks()  
         self.life = health
         self.spritesheet = spritesheet
         self.time = 90
@@ -128,19 +127,29 @@ class Shooter(Enemy):
         self.enemy_hit_player(self.player)
         self.see_player()
 
-    def see_player(self):
+        if self.cooldown > 0:
+            self.cooldown -= pygame.time.get_ticks() - self.last_time
+            if self.cooldown < 0:
+                self.cooldown = 0  
 
+        self.last_time = pygame.time.get_ticks()
+        
+    def see_player(self):
         if self.current_layer == player_mod.current_layer:
+
             if (self.direction == "right" and player_mod.player_pos.centerx >= self.x) or (
                     self.direction == "left" and player_mod.player_pos.centerx <= self.x):
 
-                if self.time > 0 and self.saw_player == False:
+                if self.time > 0 and not self.saw_player:
                     self.speed = 0
                     self.time -= 1
 
-                if self.time == 0:
+                if self.time == 0 and self.cooldown == 0: 
                     self.shoot()
+                    self.saw_player = True 
 
+            else:
+                self.saw_player = False
 
         if self.time < 90 and self.time != 0:
             self.time -= 1
@@ -150,19 +159,13 @@ class Shooter(Enemy):
 
         if self.time == 0:
             self.speed = self.usual_speed
-            self.saw_player = True
 
     def shoot(self):
-        global cooldown
-        if cooldown == 0:
-            y = self.rect.top
-            x = self.rect.centerx
-            sound_enemy.play()
-            shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 15, self.surface, self.direction, self))
-            cooldown = 20
-        elif cooldown != 0:
-            cooldown -= 1
-
+        y = self.rect.top
+        x = self.rect.centerx
+        sound_enemy.play()
+        shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 15, self.surface, self.direction, self))
+        self.cooldown = self.delay
 
 
 class Sniper(Enemy):
