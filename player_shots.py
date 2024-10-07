@@ -10,8 +10,8 @@ screen = screen_mod.screen
 pygame.mixer.init()
 splat = pygame.mixer.Sound('assets/cartoon-splat-6086.mp3')
 ptoo = pygame.mixer.Sound('assets/hollow_knight_aspid_spit.wav')
-splat.set_volume(0.4)
-ptoo.set_volume(0.7)
+splat.set_volume(0.55)
+ptoo.set_volume(1)
 
 # load sprites
 sprite_1 = pygame.image.load('assets/player_sprites/slimeshot-1.png.png')
