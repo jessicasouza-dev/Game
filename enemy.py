@@ -116,7 +116,10 @@ class Shooter(Enemy):
         self.last_time = pygame.time.get_ticks()  
         self.life = health
         self.spritesheet = spritesheet
-        self.time = 90
+        self.time = 45
+        self.shoot_windup = 45
+        self.current_shoot_windup = 45
+        self.shoot_startup = False
         self.saw_player = False
 
     def act(self):
@@ -138,26 +141,17 @@ class Shooter(Enemy):
 
             if (self.direction == "right" and player_mod.player_pos.centerx >= self.x) or (
                     self.direction == "left" and player_mod.player_pos.centerx <= self.x):
+                self.shoot_startup = True
 
-                if self.time > 0 and not self.saw_player:
-                    self.speed = 0
-                    self.time -= 1
-
-                if self.time == 0 and self.cooldown == 0: 
-                    self.shoot()
-                    self.saw_player = True 
-
+        if self.shoot_startup == True:
+            self.speed = 0
+            if not self.current_shoot_windup == 0:
+                self.current_shoot_windup -= 1
             else:
-                self.saw_player = False
-
-        if self.time < 90 and self.time != 0:
-            self.time -= 1
-
-        if self.time < 0:
-            self.time = 0
-
-        if self.time == 0:
-            self.speed = self.usual_speed
+                self.shoot()
+                self.shoot_startup = False
+                self.current_shoot_windup = self.shoot_windup
+                self.speed = self.usual_speed
 
     def shoot(self):
         y = self.rect.top
