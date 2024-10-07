@@ -10,7 +10,8 @@ screen = screen_mod.screen
 pygame.mixer.init()
 splat = pygame.mixer.Sound('assets/cartoon-splat-6086.mp3')
 ptoo = pygame.mixer.Sound('assets/hollow_knight_aspid_spit.wav')
-splat.set_volume(0.7)
+splat.set_volume(0.55)
+ptoo.set_volume(1)
 
 # load sprites
 sprite_1 = pygame.image.load('assets/player_sprites/slimeshot-1.png.png')
@@ -25,10 +26,10 @@ BASE_DAMAGE_MODIFIER = 1
 damage_value = BASE_DAMAGE
 damage_modifier = BASE_DAMAGE_MODIFIER
 
-BASE_SPEED = 15
+BASE_SPEED = 30
 speed_value = BASE_SPEED
 
-BASE_COOLDOWN = 18 # cooldown counted in frames (60/sec)
+BASE_COOLDOWN = 9 # cooldown counted in frames (60/sec)
 cooldown_value = BASE_COOLDOWN
 
 BASE_PIERCE = 0
@@ -194,13 +195,13 @@ class explosion:
     def run_animation(self):
         if self.innertimer == 0:
             splat.play()
-        if self.innertimer <= 4:
+        if self.innertimer <= 3:
             self.sprite = self.sprite_1
             self.sprite.set_alpha(164)
-        elif self.innertimer <= 8:
+        elif self.innertimer <= 6:
             self.sprite = self.sprite_2
             self.sprite.set_alpha(124)
-        elif self.innertimer <= 16:
+        elif self.innertimer <= 12:
             self.sprite = self.sprite_3
             self.sprite.set_alpha(84)
         
@@ -208,7 +209,7 @@ class explosion:
         screen.blit(self.sprite, self.rect)
         self.innertimer += 1
 
-        if self.innertimer > 16:
+        if self.innertimer > 12:
             active_explosions.remove(self)
 
 def animate_explosions():

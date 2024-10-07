@@ -5,7 +5,6 @@ import player_shots as player_shots_mod
 import screen as screen_mod
 import random as random
 import shot as shot_mod
-import life as life_mod
 
 enemy_color_temporary = (0, 0, 252)
 
@@ -16,10 +15,10 @@ ENEMY_HEIGHT = 50
 
 cooldown = 0
 sniper_cooldown = 0
-delay = 100
+delay = 50
 
 pygame.mixer.init()
-sound_enemy = pygame.mixer.Sound('assets/synth-shot-fx-by-alien-i-trust-9-245434.mp3')
+sound_enemy = pygame.mixer.Sound('assets/smw_bowser_fire.wav')
 sound_enemy_dead = pygame.mixer.Sound('assets/goblin-death-clash-of-clans.mp3')
 sound_enemy_dead.set_volume(0.25)
 
@@ -52,12 +51,12 @@ class Enemy:
         self.rect = pygame.Rect(x, y, self.width, self.height)
         self.current_layer = current_layer
         self.rect.centerx = self.x
-        self.rect.centery = self.y - (self.height -25)
+        self.rect.centery = self.y - (self.height - 25)
         self.life = health
         self.spritesheet = spritesheet
         self.sprite_index = 0
         self.sprite = self.spritesheet[self.sprite_index]
-        self.sprite_change_timer = 6
+        self.sprite_change_timer = 3
         self.shots_hit = []
 
     def act(self):
@@ -83,7 +82,7 @@ class Enemy:
             self.x += self.speed
             if self.x + self.width >= screen_mod.screen.get_width():
                 self.x = screen_mod.screen.get_width() - self.width
-                self.direction = 'left'  # Inverte a direção quando chega à borda direita
+                self.direction = 'left'
         if self.direction == 'left':
             self.sprite = pygame.transform.flip(self.sprite, True, False)
             self.x -= self.speed
@@ -112,13 +111,15 @@ class Shooter(Enemy):
     def __init__(self, x, y, speed, surface, direction, player, current_layer, health, spritesheet):
         super().__init__(x, y, speed, surface, direction, player, current_layer, health, spritesheet)
         self.is_shooting = False
-        self.delay = 500
-        self.last_time = 0
-        self.already_shot = False
-        self.switch = False
+        self.delay = 600
+        self.cooldown = 0  
+        self.last_time = pygame.time.get_ticks()  
         self.life = health
         self.spritesheet = spritesheet
-        self.time = 90
+        self.time = 20
+        self.shoot_windup = 20
+        self.current_shoot_windup = 20
+        self.shoot_startup = False
         self.saw_player = False
 
     def act(self):
@@ -128,48 +129,43 @@ class Shooter(Enemy):
         self.enemy_hit_player(self.player)
         self.see_player()
 
-    def see_player(self):
+        if self.cooldown > 0:
+            self.cooldown -= pygame.time.get_ticks() - self.last_time
+            if self.cooldown < 0:
+                self.cooldown = 0  
 
+        self.last_time = pygame.time.get_ticks()
+        
+    def see_player(self):
         if self.current_layer == player_mod.current_layer:
+
             if (self.direction == "right" and player_mod.player_pos.centerx >= self.x) or (
                     self.direction == "left" and player_mod.player_pos.centerx <= self.x):
+                self.shoot_startup = True
 
-                if self.time > 0 and self.saw_player == False:
-                    self.speed = 0
-                    self.time -= 1
-
-                if self.time == 0:
-                    self.shoot()
-
-
-        if self.time < 90 and self.time != 0:
-            self.time -= 1
-
-        if self.time < 0:
-            self.time = 0
-
-        if self.time == 0:
-            self.speed = self.usual_speed
-            self.saw_player = True
+        if self.shoot_startup == True:
+            self.speed = 0
+            if not self.current_shoot_windup == 0:
+                self.current_shoot_windup -= 1
+            else:
+                self.shoot()
+                self.shoot_startup = False
+                self.current_shoot_windup = self.shoot_windup
+                self.speed = self.usual_speed
 
     def shoot(self):
-        global cooldown
-        if cooldown == 0:
-            y = self.rect.top
-            x = self.rect.centerx
-            sound_enemy.play()
-            shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 15, self.surface, self.direction, self))
-            cooldown = 20
-        elif cooldown != 0:
-            cooldown -= 1
-
+        y = self.rect.top
+        x = self.rect.centerx
+        sound_enemy.play()
+        shot_mod.active_projectiles.append(shot_mod.Shot(x, y, 15, self.surface, self.direction, self))
+        self.cooldown = self.delay
 
 
 class Sniper(Enemy):
     def __init__(self, x, y, speed, surface, direction, player, current_layer, health, spritesheet):
         super().__init__(x, y, speed, surface, direction, player, current_layer, health, spritesheet)
         self.is_shooting = False
-        self.delay = 500
+        self.delay = 1450
         self.color = (255, 0, 0)
         self.last_time = 0
         self.last_time_walk = 0
@@ -179,6 +175,10 @@ class Sniper(Enemy):
         self.wandering = True
         self.shooting_at_player = False
         self.found_player = False
+        self.shoot_windup = 20
+        self.current_shoot_windup = 20
+        self.shoot_startup = False
+        self.saw_player = False
 
     def act(self):
         self.drawEnemy()
@@ -187,55 +187,30 @@ class Sniper(Enemy):
         self.see_player()
 
     def see_player(self):
-        global cooldown
+        global sniper_cooldown
         current_time = pygame.time.get_ticks()
         distance = abs(self.x - player_mod.player_pos.x)
 
-        if distance < 20 and self.current_layer != player_mod.current_layer and self.found_player == False:
-            self.shooting_at_player = True
+        if ((distance < 20 and self.current_layer != player_mod.current_layer)
+            or (distance > 50 and self.shooting_at_player)):
             self.wandering = False
-            self.found_player = True
-
-        if distance > 50 and self.current_layer != player_mod.current_layer and self.found_player == True:
-            self.already_shot = False
-            self.found_player = False
-
-        if self.already_shot:
-            if current_time - self.last_time >= self.delay:
-                self.wandering = True
-                self.shooting_at_player = False
-                self.last_time= current_time
-
-        if self.shooting_at_player:
-            self.wandering = False
-            if current_time - self.last_time_walk >= self.delay:
-                self.shoot()
+            self.shoot_startup = True
+            
+        if self.shoot_startup:
+            if not self.current_shoot_windup == 0:
+                self.current_shoot_windup -= 1
+                self.speed = 0
+            else:
                 sound_enemy.play()
-                self.already_shot = True
-                self.last_time_walk = current_time
+                self.shoot()
+                self.shoot_startup = False
+                self.current_shoot_windup = self.shoot_windup
+                self.speed = self.usual_speed
 
-        else:
-            self.wandering = True
-            if current_time - self.last_time_walk >= self.delay:
-                self.already_shot = False
-                self.last_time_walk = current_time
-
-        if self.wandering:
-            self.speed = self.usual_speed
-        else:
-            self.speed = 0
+        self.last_time = current_time
 
     def shoot(self):
-        global sniper_cooldown
-        current_time = pygame.time.get_ticks()
-
-        if sniper_cooldown == 0:
-            y = self.rect.centery
-            x = self.rect.centerx
-            shot_mod.active_projectiles.append(shot_mod.VerticalShot(x, y, 15,
-                                                                     self.surface, self.direction, self, player_mod))
-            sniper_cooldown = 0
-            self.last_time = current_time
-
-        else:
-            sniper_cooldown -= 1
+        y = self.rect.centery
+        x = self.rect.centerx
+        shot_mod.active_projectiles.append(shot_mod.VerticalShot(x, y, 30,
+                                                             self.surface, self.direction, self, player_mod))

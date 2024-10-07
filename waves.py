@@ -34,7 +34,7 @@ class Wave:
         self.last_restart_time = 0
         self.enemies_dictionary = enemies_dictionary
         self.enemies_dictionary_iteratable = self.enemies_dictionary.copy()
-        self.spawn_delay = 1000
+        self.spawn_delay = 500
         self.last_spawn_time = 0
         self.enemies = []
         self.enemies_added = 0
@@ -58,13 +58,13 @@ class Wave:
                 floor = floor_mod.floors_bottom_y_list[number]
 
                 if enemy_class == 'Shooter':
-                    enemy_instance = enemy.Shooter(0, floor, 2,
+                    enemy_instance = enemy.Shooter(0, floor, random.randint(2, 3),
                                                     scrn_mod.screen, "right", player_mod.player_pos, number, 250 * health_multiplier, firegob_sprites)
                 elif enemy_class == 'Enemy':
-                    enemy_instance = enemy.Enemy(0, floor, 3,
+                    enemy_instance = enemy.Enemy(0, floor, random.randint(4, 5),
                                                  scrn_mod.screen, "right", player_mod.player_pos, number, 300 * health_multiplier, crawler_sprites)
                 elif enemy_class == 'Sniper':
-                    enemy_instance = enemy.Sniper(0, floor, 2,
+                    enemy_instance = enemy.Sniper(0, floor, random.randint(2, 4),
                                                    scrn_mod.screen, "right", player_mod.player_pos, number, 400 * health_multiplier, sniper_sprites)
 
                 self.enemies.append(enemy_instance)
