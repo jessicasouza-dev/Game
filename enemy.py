@@ -9,7 +9,6 @@ import life as life_mod
 
 enemy_color_temporary = (0, 0, 252)
 
-current_direction = 'right'
 enemy_pos = pygame.Rect(50, 50, 50, floor_mod.floor_size_y)
 
 ENEMY_WIDTH = 50
@@ -24,6 +23,7 @@ sound_enemy = pygame.mixer.Sound('assets/synth-shot-fx-by-alien-i-trust-9-245434
 sound_enemy_dead = pygame.mixer.Sound('assets/goblin-death-clash-of-clans.mp3')
 sound_enemy_dead.set_volume(0.25)
 
+screen_width = screen_mod.screen.get_width()
 
 
 
@@ -31,11 +31,18 @@ class Enemy:
     def __init__(self, x, y, speed, surface, direction, player, current_layer, health, spritesheet):
         super().__init__()
 
-        self.x = x
         self.y = y
         self.direction = direction
         self.width = ENEMY_WIDTH
         self.height = ENEMY_HEIGHT
+        
+        if random.choice(["left", "right"]) == "left":
+            self.x = 0
+            self.direction = 'right' 
+        else:
+            self.x = screen_width - self.width 
+            self.direction = 'left' 
+                   
         self.player = player
         self.color = (0, 0, 128)
         self.speed = speed
@@ -44,8 +51,8 @@ class Enemy:
         self.surface = surface
         self.rect = pygame.Rect(x, y, self.width, self.height)
         self.current_layer = current_layer
-        self.rect.centerx = x
-        self.rect.centery = y
+        self.rect.centerx = self.x
+        self.rect.centery = self.y - (self.height -25)
         self.life = health
         self.spritesheet = spritesheet
         self.sprite_index = 0
@@ -70,13 +77,14 @@ class Enemy:
         else:
             self.sprite_change_timer -= 1
         self.sprite = self.spritesheet[self.sprite_index]
-
+        
+    
         if self.direction == 'right':
             self.x += self.speed
             if self.x + self.width >= screen_mod.screen.get_width():
                 self.x = screen_mod.screen.get_width() - self.width
-                self.direction = 'left'
-        else:
+                self.direction = 'left'  # Inverte a direção quando chega à borda direita
+        if self.direction == 'left':
             self.sprite = pygame.transform.flip(self.sprite, True, False)
             self.x -= self.speed
             if self.x <= 0:
