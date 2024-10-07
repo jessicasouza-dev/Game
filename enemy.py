@@ -5,7 +5,6 @@ import player_shots as player_shots_mod
 import screen as screen_mod
 import random as random
 import shot as shot_mod
-import life as life_mod
 
 enemy_color_temporary = (0, 0, 252)
 
@@ -83,7 +82,7 @@ class Enemy:
             self.x += self.speed
             if self.x + self.width >= screen_mod.screen.get_width():
                 self.x = screen_mod.screen.get_width() - self.width
-                self.direction = 'left'  # Inverte a direção quando chega à borda direita
+                self.direction = 'left'
         if self.direction == 'left':
             self.sprite = pygame.transform.flip(self.sprite, True, False)
             self.x -= self.speed
@@ -172,7 +171,7 @@ class Sniper(Enemy):
     def __init__(self, x, y, speed, surface, direction, player, current_layer, health, spritesheet):
         super().__init__(x, y, speed, surface, direction, player, current_layer, health, spritesheet)
         self.is_shooting = False
-        self.delay = 500
+        self.delay = 2900
         self.color = (255, 0, 0)
         self.last_time = 0
         self.last_time_walk = 0
@@ -190,55 +189,35 @@ class Sniper(Enemy):
         self.see_player()
 
     def see_player(self):
-        global cooldown
+        global sniper_cooldown
         current_time = pygame.time.get_ticks()
         distance = abs(self.x - player_mod.player_pos.x)
 
-        if distance < 20 and self.current_layer != player_mod.current_layer and self.found_player == False:
+        if distance < 20 and self.current_layer != player_mod.current_layer:
             self.shooting_at_player = True
             self.wandering = False
-            self.found_player = True
 
-        if distance > 50 and self.current_layer != player_mod.current_layer and self.found_player == True:
-            self.already_shot = False
-            self.found_player = False
+        if distance > 50 and self.shooting_at_player:
+            self.shooting_at_player = False
+            self.wandering = True 
 
-        if self.already_shot:
-            if current_time - self.last_time >= self.delay:
-                self.wandering = True
-                self.shooting_at_player = False
-                self.last_time= current_time
 
         if self.shooting_at_player:
-            self.wandering = False
-            if current_time - self.last_time_walk >= self.delay:
+            if sniper_cooldown <= 0:
                 self.shoot()
                 sound_enemy.play()
-                self.already_shot = True
-                self.last_time_walk = current_time
+                sniper_cooldown = self.delay
+            else:
+                sniper_cooldown -= (current_time - self.last_time)
+                if sniper_cooldown < 0:
+                    sniper_cooldown = 0
 
-        else:
-            self.wandering = True
-            if current_time - self.last_time_walk >= self.delay:
-                self.already_shot = False
-                self.last_time_walk = current_time
+        self.speed = self.usual_speed if self.wandering else 0
 
-        if self.wandering:
-            self.speed = self.usual_speed
-        else:
-            self.speed = 0
+        self.last_time = current_time
 
     def shoot(self):
-        global sniper_cooldown
-        current_time = pygame.time.get_ticks()
-
-        if sniper_cooldown == 0:
-            y = self.rect.centery
-            x = self.rect.centerx
-            shot_mod.active_projectiles.append(shot_mod.VerticalShot(x, y, 15,
-                                                                     self.surface, self.direction, self, player_mod))
-            sniper_cooldown = 0
-            self.last_time = current_time
-
-        else:
-            sniper_cooldown -= 1
+        y = self.rect.centery
+        x = self.rect.centerx
+        shot_mod.active_projectiles.append(shot_mod.VerticalShot(x, y, 15,
+                                                             self.surface, self.direction, self, player_mod))
