@@ -16,7 +16,7 @@ power_up_collectible_size = 100
 display_text_1 = ''
 display_text_2 = ''
 
-plus_sprite = pygame.image.load('assets/power_up_sprites/+.jpg')
+plus_sprite = pygame.image.load('assets/power_up_sprites/plus.png')
 sound_choose_power_up = pygame.mixer.Sound('assets/classic-game-action-positive-30-224562.mp3')
 
 
@@ -101,31 +101,31 @@ class powerup:
         self.rect = rect
 
         if self.effect == powerup_damageup:
-            self.sprite = pygame.image.load('assets/power_up_sprites/damage_up_placeholder.jpg')
+            self.sprite = pygame.image.load('assets/power_up_sprites/damage_up.png')
             self.text = "+50% damage!"
         elif self.effect == powerup_firerateup:
-            self.sprite = pygame.image.load('assets/power_up_sprites/fire_rate_up_placeholder.jpg')
+            self.sprite = pygame.image.load('assets/power_up_sprites/fire_rate_up.png')
             self.text = "Shoot 33% faster!"
         elif self.effect == powerup_pierceup:
-            self.sprite = pygame.image.load('assets/power_up_sprites/pierce_up_placeholder.png')
+            self.sprite = pygame.image.load('assets/power_up_sprites/pierceup.png')
             self.text = "Shots pass through one floor/enemy!"
         elif self.effect == powerup_multishot:
-            self.sprite = pygame.image.load('assets/power_up_sprites/multishot_placeholder.jpg')
+            self.sprite = pygame.image.load('assets/power_up_sprites/multishot.png')
             self.text = "More bullets per shot"
         elif self.effect == powerup_move_speed:
-            self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_leftright_placeholder.jpg')
+            self.sprite = pygame.image.load('assets/power_up_sprites/move_speed.png')
             self.text = "Speed +40%!"
         elif self.effect == powerup_climb_speed:
-            self.sprite = pygame.image.load('assets/power_up_sprites/speed_up_updown_placeholder.jpg')
+            self.sprite = pygame.image.load('assets/power_up_sprites/climb_speed.png')
             self.text = "Climbing speed +33%!"
         elif self.effect == powerup_instaheal:
-            self.sprite = pygame.image.load('assets/power_up_sprites/small_heal_placeholder.jpg')
+            self.sprite = pygame.image.load('assets/power_up_sprites/instant_heal.png')
             self.text = "Recover 30% of health!"
         elif self.effect == powerup_full_heal:
-            self.sprite = pygame.image.load('assets/power_up_sprites/full_heal_placeholder.jpg')
+            self.sprite = pygame.image.load('assets/power_up_sprites/full_heal.png')
             self.text = "Recover 100% of health!"
         elif self.effect == powerup_health_boost:
-            self.sprite = pygame.image.load('assets/power_up_sprites/max_health_up_placeholder.jpg')
+            self.sprite = pygame.image.load('assets/power_up_sprites/health_boost.png')
             self.text = "Increase maximum health by 25!"
 
         self.sprite = pygame.transform.scale(self.sprite, (power_up_collectible_size, power_up_collectible_size))
@@ -173,11 +173,11 @@ def do_selection(is_selecting):
     for n in range(1, 4):
         ground_y = floors_bottom_y_list[n]
         rect_1 = pygame.Rect(0, 0, power_up_collectible_size, power_up_collectible_size)
-        rect_1.bottom = ground_y
+        rect_1.bottom = ground_y - floor_mod.floor_size_y/10
         rect_1.centerx = (floor_mod.floor_size_x / 2) - 100
 
         rect_2 = pygame.Rect(0, 0, power_up_collectible_size, power_up_collectible_size)
-        rect_2.bottom = ground_y
+        rect_2.bottom = ground_y - floor_mod.floor_size_y/10
         rect_2.centerx = (floor_mod.floor_size_x / 2) + 100
 
         pwrup_1 = powerup(bundle_list[n - 2][0], rect_1)
@@ -187,7 +187,7 @@ def do_selection(is_selecting):
         pwrup_2.render()
         plus_rect = pygame.Rect(0, 0, 66, 66)
         plus_rect.centerx = floor_mod.floor_size_x / 2
-        plus_rect.bottom = ground_y
+        plus_rect.bottom = ground_y - floor_mod.floor_size_y/6
         screen.blit(plus_sprite, plus_rect)
 
         local_pwrup_bundle = [pwrup_1.effect, pwrup_2.effect]

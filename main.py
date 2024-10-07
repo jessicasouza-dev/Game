@@ -55,8 +55,8 @@ DELAY = 5000
 game_loop = True
 
 wave_config1 = {
-    'Shooter': 0,
-    'Enemy': random.randint(8, 12),
+    'Shooter': 1,
+    'Enemy': random.randint(0, 0),
     'Sniper': 0
 }
 
