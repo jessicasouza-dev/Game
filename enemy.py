@@ -18,7 +18,7 @@ sniper_cooldown = 0
 delay = 50
 
 pygame.mixer.init()
-sound_enemy = pygame.mixer.Sound('assets/synth-shot-fx-by-alien-i-trust-9-245434.mp3')
+sound_enemy = pygame.mixer.Sound('assets/smw_bowser_fire.wav')
 sound_enemy_dead = pygame.mixer.Sound('assets/goblin-death-clash-of-clans.mp3')
 sound_enemy_dead.set_volume(0.25)
 
@@ -116,9 +116,9 @@ class Shooter(Enemy):
         self.last_time = pygame.time.get_ticks()  
         self.life = health
         self.spritesheet = spritesheet
-        self.time = 30
-        self.shoot_windup = 30
-        self.current_shoot_windup = 30
+        self.time = 20
+        self.shoot_windup = 20
+        self.current_shoot_windup = 20
         self.shoot_startup = False
         self.saw_player = False
 
@@ -175,6 +175,10 @@ class Sniper(Enemy):
         self.wandering = True
         self.shooting_at_player = False
         self.found_player = False
+        self.shoot_windup = 20
+        self.current_shoot_windup = 20
+        self.shoot_startup = False
+        self.saw_player = False
 
     def act(self):
         self.drawEnemy()
@@ -187,26 +191,21 @@ class Sniper(Enemy):
         current_time = pygame.time.get_ticks()
         distance = abs(self.x - player_mod.player_pos.x)
 
-        if distance < 20 and self.current_layer != player_mod.current_layer:
-            self.shooting_at_player = True
+        if ((distance < 20 and self.current_layer != player_mod.current_layer)
+            or (distance > 50 and self.shooting_at_player)):
             self.wandering = False
-
-        if distance > 50 and self.shooting_at_player:
-            self.shooting_at_player = False
-            self.wandering = True 
-
-
-        if self.shooting_at_player:
-            if sniper_cooldown <= 0:
-                self.shoot()
-                sound_enemy.play()
-                sniper_cooldown = self.delay
+            self.shoot_startup = True
+            
+        if self.shoot_startup:
+            if not self.current_shoot_windup == 0:
+                self.current_shoot_windup -= 1
+                self.speed = 0
             else:
-                sniper_cooldown -= (current_time - self.last_time)
-                if sniper_cooldown < 0:
-                    sniper_cooldown = 0
-
-        self.speed = self.usual_speed if self.wandering else 0
+                sound_enemy.play()
+                self.shoot()
+                self.shoot_startup = False
+                self.current_shoot_windup = self.shoot_windup
+                self.speed = self.usual_speed
 
         self.last_time = current_time
 
